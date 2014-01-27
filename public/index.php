@@ -10,7 +10,7 @@ $lib = new Factory();
 $lib->setDirectory(LIB);
 $model = new Factory();
 $model->setDirectory(MODEL);
-$lib->debug(true);
+
 $router = $lib->make('Router');
 $router->rule();
 

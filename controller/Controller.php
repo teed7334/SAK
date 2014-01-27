@@ -44,7 +44,7 @@ class Controller {
 
 	}
 
-	public function render($view = '') {
+	public function view($view = '') {
 
 		try {
 
