@@ -8,17 +8,8 @@ include_once(MODEL . '/Model.php');
 
 $lib = new Factory();
 $lib->setDirectory(LIB);
-$model = new Factory();
-$model->setDirectory(MODEL);
-
 $router = $lib->make('Router');
 $router->rule();
-
-$_SERVER['MYSQL'] = $lib->make('MySQL'); 
-$_SERVER['MYSQL']->setAdapter(HOST, ACCOUNT, PASSWORD, DATABASE);
-
-$_SERVER['LIB'] = $lib;
-$_SERVER['MODEL'] = $model;
 
 $router->controller();
 ?>

@@ -11,10 +11,11 @@ class Controller {
 
 		try {
 
-			$this->model = $_SERVER['MODEL'];
-			$this->lib = $_SERVER['LIB'];
-			unset($_SERVER['MODEL']);
-			unset($_SERVER['LIB']);
+			include_once(LIB . '/Factory.php');
+			$this->lib = new Factory();
+			$this->lib->setDirectory(LIB);
+			$this->model = new Factory();
+			$this->model->setDirectory(MODEL);
 
 		} catch(Exception $e) {
 
