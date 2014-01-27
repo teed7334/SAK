@@ -1,1 +1,1 @@
-<p>Hello World!!!!</p>
+<p><?php echo $this->data['hello']; ?></p>
