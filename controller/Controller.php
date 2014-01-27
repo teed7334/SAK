@@ -102,7 +102,7 @@ class Controller {
 				return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key, 'value' => $value)) : false;
 			}
 
-			$_SERVER['js_controller'][$key] = $value;
+			$_SERVER['js_controller'][$key] = "" . $value;
 
 			return true;
 
