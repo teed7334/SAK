@@ -11,7 +11,6 @@ class Controller {
 
 		try {
 
-			include_once(LIB . '/Factory.php');
 			$this->lib = new Factory();
 			$this->lib->setDirectory(LIB);
 			$this->model = new Factory();
