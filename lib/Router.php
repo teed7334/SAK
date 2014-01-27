@@ -122,6 +122,7 @@ class Router {
             }
 
             include_once($js_controller);
+            echo "\n";
 
             unset($_SERVER['js_controller']);
 

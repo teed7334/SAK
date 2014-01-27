@@ -59,6 +59,7 @@ class Controller {
 	        }
 
 	        include_once($view);
+	        echo "\n";
 
 	        return true;
 
@@ -83,6 +84,7 @@ class Controller {
 	        }
 
 	        include_once($element);
+	        echo "\n";
 
 	        return true;
 
