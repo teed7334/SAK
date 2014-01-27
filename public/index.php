@@ -20,11 +20,7 @@ $_SERVER['MYSQL']->setAdapter(HOST, ACCOUNT, PASSWORD, DATABASE);
 $_SERVER['LIB'] = $lib;
 $_SERVER['MODEL'] = $model;
 
-if(!isset($_SERVER['LAYOUT'])) {
-	$_SERVER['LAYOUT'] = '/html41.php';
-}
-require_once(LAYOUT . $_SERVER['LAYOUT']);
-
+$router->controller();
 ?>
 
 
