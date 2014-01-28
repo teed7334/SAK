@@ -20,14 +20,14 @@ class Router {
             	for($i = 0; $i < $count; $i++) {
                     if(trim($uri[$i]) != '') {
                 		if($i == 1) {
-                			$_GET['controller'] = $uri[$i];
+                			$_GET['controller'] = (string) filter_var($uri[$i], FILTER_SANITIZE_STRING);
                 		} elseif($i == 2) {
-                			$_GET['action'] = $uri[$i];
+                			$_GET['action'] = (string) filter_var($uri[$i], FILTER_SANITIZE_STRING);
                 		} elseif($i > 2) {
                 			if($i % 2 != 0) {
-                				$_GET[$uri[$i]] = NULL;
+                				$_GET[(string) filter_var($uri[$i], FILTER_SANITIZE_STRING)] = NULL;
                 			} else {
-                				$_GET[$uri[$i - 1]] = $uri[$i];
+                				$_GET[$uri[$i - 1]] = (string) filter_var($uri[$i], FILTER_SANITIZE_STRING);
                 			}
                 		}
                     }
@@ -41,7 +41,7 @@ class Router {
             foreach($uri as $items) {
                 $get = explode('=', $items);
                 if(trim($get[0]) != '' && trim($get[1]) != '') {
-                    $_GET[$get[0]] = $get[1];
+                    $_GET[(string) filter_var($get[0], FILTER_SANITIZE_STRING)] = (string) filter_var($get[1], FILTER_SANITIZE_STRING);;
                 }
             }
 
