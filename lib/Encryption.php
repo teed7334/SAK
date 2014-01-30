@@ -29,58 +29,80 @@ class Encryption {
     }
 
     public function import_key($key) {
-        $this->use = 'postnatal';
-        $this->key = md5(sha1($key));
+
+        try {
+
+            $this->use = 'postnatal';
+            $this->key = md5(sha1($key));
+
+        } catch(Exception $e) {
+
+        }
+
     }
 
     protected function innateness($value = 0) {
 
-        $val = false;
+        try {
 
-        if((int)$value == 0) {
-            $val = $this->qian();
-        } elseif((int)$value == 1) {
-            $val = $this->dui();
-        } elseif((int)$value == 2) {
-            $val = $this->li();
-        } elseif((int)$value == 3) {
-            $val = $this->zhen();
-        } elseif((int)$value == 4) {
-            $val = $this->xun();
-        } elseif((int)$value == 5) {
-            $val = $this->kan();
-        } elseif((int)$value == 6) {
-            $val = $this->gen();
-        } else {
-            $val = $this->kun();
+            $val = false;
+
+            if((int)$value == 0) {
+                $val = $this->qian();
+            } elseif((int)$value == 1) {
+                $val = $this->dui();
+            } elseif((int)$value == 2) {
+                $val = $this->li();
+            } elseif((int)$value == 3) {
+                $val = $this->zhen();
+            } elseif((int)$value == 4) {
+                $val = $this->xun();
+            } elseif((int)$value == 5) {
+                $val = $this->kan();
+            } elseif((int)$value == 6) {
+                $val = $this->gen();
+            } else {
+                $val = $this->kun();
+            }
+
+            return $val;
+
+        } catch(Exception $e) {
+
         }
 
-        return $val;
     }
 
     protected function postnatal($value = 0) {
 
-        $val = false;
+        try {
 
-        if((int)$value == 0) {
-            $val = $this->zhen();
-        } elseif((int)$value == 1) {
-            $val = $this->xun();
-        } elseif((int)$value == 2) {
-            $val = $this->li();
-        } elseif((int)$value == 3) {
-            $val = $this->kun();
-        } elseif((int)$value == 4) {
-            $val = $this->dui();
-        } elseif((int)$value == 5) {
-            $val = $this->qian();
-        } elseif((int)$value == 6) {
-            $val = $this->kan();
-        } else {
-            $val = $this->gen();
+            $val = false;
+
+            if((int)$value == 0) {
+                $val = $this->zhen();
+            } elseif((int)$value == 1) {
+                $val = $this->xun();
+            } elseif((int)$value == 2) {
+                $val = $this->li();
+            } elseif((int)$value == 3) {
+                $val = $this->kun();
+            } elseif((int)$value == 4) {
+                $val = $this->dui();
+            } elseif((int)$value == 5) {
+                $val = $this->qian();
+            } elseif((int)$value == 6) {
+                $val = $this->kan();
+            } else {
+                $val = $this->gen();
+            }
+
+            return $val;
+
+        } catch(Exception $e) {
+
         }
 
-        return $val;
     }
         
     protected function qian() {
@@ -116,262 +138,322 @@ class Encryption {
     }
 
     protected function calc_original() {
+
+        try {
         
-        $top = ($this->y + $this->m + $this->d) % 8;
-        $bottom = ($this->y + $this->m + $this->d + $this->h) % 8;
+            $top = ($this->y + $this->m + $this->d) % 8;
+            $bottom = ($this->y + $this->m + $this->d + $this->h) % 8;
 
-        $this->original_top = $top;
-        $this->original_bottom = $bottom;
+            $this->original_top = $top;
+            $this->original_bottom = $bottom;
 
-        $this->original = $top . $bottom;
+            $this->original = $top . $bottom;
 
-        return $this->use == 'innateness' ? array('top' => md5($this->innateness($top)), 'bottom' => md5($this->innateness($bottom))) : array('top' => md5($this->postnatal($top)), 'bottom' => md5($this->postnatal($bottom)));
+            return $this->use == 'innateness' ? array('top' => md5($this->innateness($top)), 'bottom' => md5($this->innateness($bottom))) : array('top' => md5($this->postnatal($top)), 'bottom' => md5($this->postnatal($bottom)));
+
+        } catch(Exception $e) {
+
+        }
+
     }
 
     public function calc_change() {
 
-        $this->change = '';
+        try {
 
-        $postition = ($this->y + $this->m + $this->d + $this->h) % 6;
-        $tmp = str_split($this->original);
+            $this->change = '';
 
-        foreach($tmp as $items) {
-            $this->change .= $this->innateness($items);
-        }
+            $postition = ($this->y + $this->m + $this->d + $this->h) % 6;
+            $tmp = str_split($this->original);
 
-        $tmp = str_split($this->change);
-
-        if((int)$tmp[$postition] == 0) {
-            $tmp[$postition] = '1';
-        } else {
-            $tmp[$postition] = '0';
-        }
-
-        $top = '';
-        $bottom = '';
-        $this->change = $postition;
-
-        for($i = 0; $i <= 5; $i++) {
-            if($i <=2 ) {
-                $top .= $tmp[$i];
-            } else {
-                $bottom .= $tmp[$i];
+            foreach($tmp as $items) {
+                $this->change .= $this->innateness($items);
             }
+
+            $tmp = str_split($this->change);
+
+            if((int)$tmp[$postition] == 0) {
+                $tmp[$postition] = '1';
+            } else {
+                $tmp[$postition] = '0';
+            }
+
+            $top = '';
+            $bottom = '';
+            $this->change = $postition;
+
+            for($i = 0; $i <= 5; $i++) {
+                if($i <=2 ) {
+                    $top .= $tmp[$i];
+                } else {
+                    $bottom .= $tmp[$i];
+                }
+            }
+
+            $this->change_top = $top;
+            $this->change_bottom = $bottom;
+
+            return array('top' => md5($top), 'bottom' => md5($bottom));
+
+        } catch(Exception $e) {
+
         }
 
-        $this->change_top = $top;
-        $this->change_bottom = $bottom;
-
-        return array('top' => md5($top), 'bottom' => md5($bottom));
     }
 
-    public function inreversible_encode($string = '') {
-    
-        $string = $this->encode($string);
-        $string = $string . PRIVATE_KEY;
-        $change = $this->change_top . $this->change_bottom;
-        $change = str_split($change);
+    public function inreversible_encode($string = '', $private_key = '') {
 
-        foreach($change as $items) {
-            if((int)$items == 0) {
-                $string = sha1($string);
-            } else {
-                $string = md5($string);
+        try{
+    
+            $string = $this->encode($string);
+            $string = $string . $private_key;
+            $change = $this->change_top . $this->change_bottom;
+            $change = str_split($change);
+
+            foreach($change as $items) {
+                if((int)$items == 0) {
+                    $string = sha1($string);
+                } else {
+                    $string = md5($string);
+                }
             }
+
+            return $string;
+
+        } catch(Exception $e) {
+
         }
 
-        return $string;
     }
 
     protected function innateness_encode($string = '') {
 
-        $string = base64_encode(json_encode($string));
-        $original = $this->calc_original();
-        $string = $original['top'] . $string . $original['bottom'];
-        $string = urlencode($string);
+        try {
 
-        $num = ceil(strlen($string) / 2);
-        $string = substr($string, $num) . substr($string, 0, $num);
-        $string = base64_encode($string);
-        
-        $change = $this->calc_change();
-        $string = $change['top'] . $string . $change['bottom'];
+            $string = base64_encode(json_encode($string));
+            $original = $this->calc_original();
+            $string = $original['top'] . $string . $original['bottom'];
+            $string = urlencode($string);
 
-        $string = base64_encode($string);
+            $num = ceil(strlen($string) / 2);
+            $string = substr($string, $num) . substr($string, 0, $num);
+            $string = base64_encode($string);
+            
+            $change = $this->calc_change();
+            $string = $change['top'] . $string . $change['bottom'];
 
-        $string = urlencode($string);
+            $string = base64_encode($string);
 
-        return $string;
+            $string = urlencode($string);
+
+            return $string;
+
+        } catch(Exception $e) {
+
+        }
+
     }
 
     protected function innateness_decode($string = '') {
 
-        $value = $string;
-        
-        $string = urldecode($string);
-        $string = base64_decode($string);
+        try {
 
-        $change = $this->calc_change();
+            $value = $string;
+            
+            $string = urldecode($string);
+            $string = base64_decode($string);
 
-        $string_length = strlen($string);
-        $top_length = strlen($change['top']);
-        $bottom_length = strlen($change['bottom']);
+            $change = $this->calc_change();
 
-        if($string_length < ($top_length + $bottom_length)) {
-            return $this->debug ? array('message' => "string {$value} length error(1)" , 'status' => false, 'value' => $value) : false;
+            $string_length = strlen($string);
+            $top_length = strlen($change['top']);
+            $bottom_length = strlen($change['bottom']);
+
+            if($string_length < ($top_length + $bottom_length)) {
+                return $this->debug ? array('message' => "string {$value} length error(1)" , 'status' => false, 'value' => $value) : false;
+            }
+
+            $tmp = explode($change['top'], $string);
+            if(count($tmp) < 2 || !isset($tmp[0]) || $tmp[0] != '') {
+                return $this->debug ? array('message' => "string {$value} can't decode(1)" , 'status' => false, 'value' => $value) : false;
+            }
+
+            $string = substr($string, $top_length);
+            $string_length = strlen($string);
+
+            $tmp = explode($change['bottom'], $string);
+            if(count($tmp) < 2 || !isset($tmp[1]) || $tmp[1] != '') {
+                return $this->debug ? array('message' => "string {$value} can't decode(2)" , 'status' => false, 'value' => $value) : false;
+            }
+
+            $string = substr($string, 0, $string_length - $bottom_length);
+
+            $string = base64_decode($string);
+            $num = ceil(strlen($string) / 2);
+            $string = substr($string, $num) . substr($string, 0, $num);
+
+            $string = urldecode($string);
+
+            $original = $this->calc_original();
+
+            $string_length = strlen($string);
+            $top_length = strlen($original['top']);
+            $bottom_length = strlen($original['bottom']);
+
+            if($string_length < ($top_length + $bottom_length)) {
+                return $this->debug ? array('message' => "string {$value} length error(2)" , 'status' => false, 'value' => $value) : false;
+            }
+
+            $tmp = explode($original['top'], $string);
+            if(count($tmp) < 2 || !isset($tmp[0]) || $tmp[0] != '') {
+                return $this->debug ? array('message' => "string {$value} can't decode(3)" , 'status' => false, 'value' => $value) : false;
+            }
+
+            $string = substr($string, $top_length);
+            $string_length = strlen($string);
+
+            $tmp = explode($original['bottom'], $string);
+            if(count($tmp) < 2 || !isset($tmp[1]) || $tmp[1] != '') {
+                return $this->debug ? array('message' => "string {$value} can't decode(4)" , 'status' => false, 'value' => $value) : false;
+            }
+
+            $string = substr($string, 0, $string_length - $bottom_length);
+
+            $string = base64_decode($string);
+            $string = json_decode($string);
+
+            return $string;
+
+        } catch(Exception $e) {
+
         }
-
-        $tmp = explode($change['top'], $string);
-        if(count($tmp) < 2 || !isset($tmp[0]) || $tmp[0] != '') {
-            return $this->debug ? array('message' => "string {$value} can't decode(1)" , 'status' => false, 'value' => $value) : false;
-        }
-
-        $string = substr($string, $top_length);
-        $string_length = strlen($string);
-
-        $tmp = explode($change['bottom'], $string);
-        if(count($tmp) < 2 || !isset($tmp[1]) || $tmp[1] != '') {
-            return $this->debug ? array('message' => "string {$value} can't decode(2)" , 'status' => false, 'value' => $value) : false;
-        }
-
-        $string = substr($string, 0, $string_length - $bottom_length);
-
-        $string = base64_decode($string);
-        $num = ceil(strlen($string) / 2);
-        $string = substr($string, $num) . substr($string, 0, $num);
-
-        $string = urldecode($string);
-
-        $original = $this->calc_original();
-
-        $string_length = strlen($string);
-        $top_length = strlen($original['top']);
-        $bottom_length = strlen($original['bottom']);
-
-        if($string_length < ($top_length + $bottom_length)) {
-            return $this->debug ? array('message' => "string {$value} length error(2)" , 'status' => false, 'value' => $value) : false;
-        }
-
-        $tmp = explode($original['top'], $string);
-        if(count($tmp) < 2 || !isset($tmp[0]) || $tmp[0] != '') {
-            return $this->debug ? array('message' => "string {$value} can't decode(3)" , 'status' => false, 'value' => $value) : false;
-        }
-
-        $string = substr($string, $top_length);
-        $string_length = strlen($string);
-
-        $tmp = explode($original['bottom'], $string);
-        if(count($tmp) < 2 || !isset($tmp[1]) || $tmp[1] != '') {
-            return $this->debug ? array('message' => "string {$value} can't decode(4)" , 'status' => false, 'value' => $value) : false;
-        }
-
-        $string = substr($string, 0, $string_length - $bottom_length);
-
-        $string = base64_decode($string);
-        $string = json_decode($string);
-
-        return $string;
     }
 
     protected function postnatal_encode($string = '') {
 
-        $string = base64_encode(json_encode($string));
-        $original = $this->calc_original();
-        $string = $original['top'] . $string . $original['bottom'];
-        $string = urlencode($string);
+        try {
 
-        $num = ceil(strlen($string) / 2);
-        $string = substr($string, $num) . substr($string, 0, $num) . $this->key;
-        $string = base64_encode($string);
-        
-        $change = $this->calc_change();
-        $string = $string . $change['top'] . $change['bottom'];
+            $string = base64_encode(json_encode($string));
+            $original = $this->calc_original();
+            $string = $original['top'] . $string . $original['bottom'];
+            $string = urlencode($string);
 
-        $string = base64_encode($string);
+            $num = ceil(strlen($string) / 2);
+            $string = substr($string, $num) . substr($string, 0, $num) . $this->key;
+            $string = base64_encode($string);
+            
+            $change = $this->calc_change();
+            $string = $string . $change['top'] . $change['bottom'];
 
-        $string = urlencode($string);
+            $string = base64_encode($string);
 
-        return $string;
+            $string = urlencode($string);
+
+            return $string;
+
+        } catch(Exception $e) {
+
+        }
+
     }
 
     protected function postnatal_decode($string = '') {
 
-        $value = $string;
-        
-        $string = urldecode($string);
-        $string = base64_decode($string);
+        try {
 
-        $change = $this->calc_change();
+            $value = $string;
+            
+            $string = urldecode($string);
+            $string = base64_decode($string);
 
-        $string_length = strlen($string);
-        $top_length = strlen($change['top']);
-        $bottom_length = strlen($change['bottom']);
+            $change = $this->calc_change();
 
-        if($string_length < ($top_length + $bottom_length)) {
-            return $this->debug ? array('message' => "string {$value} length error(1)" , 'status' => false, 'value' => $value) : false;
+            $string_length = strlen($string);
+            $top_length = strlen($change['top']);
+            $bottom_length = strlen($change['bottom']);
+
+            if($string_length < ($top_length + $bottom_length)) {
+                return $this->debug ? array('message' => "string {$value} length error(1)" , 'status' => false, 'value' => $value) : false;
+            }
+
+            $tmp = explode($change['top'], $string);
+            if(count($tmp) < 2 || !isset($tmp[1]) || $tmp[1] != '') {
+                return $this->debug ? array('message' => "string {$value} can't decode(1)" , 'status' => false, 'value' => $value) : false;
+            }
+
+            $string = substr($string, 0, $string_length - $top_length - $bottom_length);
+
+            $string = base64_decode($string);
+
+            $tmp = explode($this->key, $string);
+            if(count($tmp) < 2 || !isset($tmp[1]) || $tmp[1] != '') {
+                return $this->debug ? array('message' => "string {$value} can't decode(2)" , 'status' => false, 'value' => $value) : false;
+            }
+
+            $string_length = strlen($string);
+            $public_key_length = strlen($this->key);
+
+            $string = substr($string, 0, $string_length - $public_key_length);
+
+            $num = ceil(strlen($string) / 2);
+            $string = substr($string, $num) . substr($string, 0, $num);
+
+            $string = urldecode($string);
+
+            $original = $this->calc_original();
+
+            $string_length = strlen($string);
+            $top_length = strlen($original['top']);
+            $bottom_length = strlen($original['bottom']);
+
+            if($string_length < ($top_length + $bottom_length)) {
+                return $this->debug ? array('message' => "string {$value} length error(2)" , 'status' => false, 'value' => $value) : false;
+            }
+
+            $tmp = explode($original['top'], $string);
+            if(count($tmp) < 2 || !isset($tmp[0]) || $tmp[0] != '') {
+                return $this->debug ? array('message' => "string {$value} can't decode(3)" , 'status' => false, 'value' => $value) : false;
+            }
+
+            $string = substr($string, $top_length);
+            $string_length = strlen($string);
+
+            $tmp = explode($original['bottom'], $string);
+            if(count($tmp) < 2 || !isset($tmp[1]) || $tmp[1] != '') {
+                return $this->debug ? array('message' => "string {$value} can't decode(4)" , 'status' => false, 'value' => $value) : false;
+            }
+
+            $string = substr($string, 0, $string_length - $bottom_length);
+
+            $string = base64_decode($string);
+            $string = json_decode($string);
+
+            return $string;
+
+        } catch(Exception $e) {
+
         }
 
-        $tmp = explode($change['top'], $string);
-        if(count($tmp) < 2 || !isset($tmp[1]) || $tmp[1] != '') {
-            return $this->debug ? array('message' => "string {$value} can't decode(1)" , 'status' => false, 'value' => $value) : false;
-        }
-
-        $string = substr($string, 0, $string_length - $top_length - $bottom_length);
-
-        $string = base64_decode($string);
-
-        $tmp = explode($this->key, $string);
-        if(count($tmp) < 2 || !isset($tmp[1]) || $tmp[1] != '') {
-            return $this->debug ? array('message' => "string {$value} can't decode(2)" , 'status' => false, 'value' => $value) : false;
-        }
-
-        $string_length = strlen($string);
-        $public_key_length = strlen($this->key);
-
-        $string = substr($string, 0, $string_length - $public_key_length);
-
-        $num = ceil(strlen($string) / 2);
-        $string = substr($string, $num) . substr($string, 0, $num);
-
-        $string = urldecode($string);
-
-        $original = $this->calc_original();
-
-        $string_length = strlen($string);
-        $top_length = strlen($original['top']);
-        $bottom_length = strlen($original['bottom']);
-
-        if($string_length < ($top_length + $bottom_length)) {
-            return $this->debug ? array('message' => "string {$value} length error(2)" , 'status' => false, 'value' => $value) : false;
-        }
-
-        $tmp = explode($original['top'], $string);
-        if(count($tmp) < 2 || !isset($tmp[0]) || $tmp[0] != '') {
-            return $this->debug ? array('message' => "string {$value} can't decode(3)" , 'status' => false, 'value' => $value) : false;
-        }
-
-        $string = substr($string, $top_length);
-        $string_length = strlen($string);
-
-        $tmp = explode($original['bottom'], $string);
-        if(count($tmp) < 2 || !isset($tmp[1]) || $tmp[1] != '') {
-            return $this->debug ? array('message' => "string {$value} can't decode(4)" , 'status' => false, 'value' => $value) : false;
-        }
-
-        $string = substr($string, 0, $string_length - $bottom_length);
-
-        $string = base64_decode($string);
-        $string = json_decode($string);
-
-        return $string;
     }
 
     public function encode($string = '') {
-        return $this->use == 'innateness' ? $this->innateness_encode($string) : $this->postnatal_encode($string);
+
+        try {
+            return $this->use == 'innateness' ? $this->innateness_encode($string) : $this->postnatal_encode($string);
+        } catch(Exception $e) {
+
+        }
+        
     }
 
     public function decode($string = '') {
-        return $this->use == 'innateness' ? $this->innateness_decode($string) : $this->postnatal_decode($string);
+
+        try {
+            return $this->use == 'innateness' ? $this->innateness_decode($string) : $this->postnatal_decode($string);
+        } catch(Exception $e) {
+
+        }
+
     }
 
 }
