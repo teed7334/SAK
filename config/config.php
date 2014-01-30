@@ -11,4 +11,6 @@ define('HOST', '');
 define('ACCOUNT', '');
 define('PASSWORD', '');
 define('DATABASE', '');
+
+define('PRIVATE_KEY', '!QAZSE$RFVGY&UJMKO)P:?');
 ?>
