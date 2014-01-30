@@ -26,80 +26,76 @@ class Controller {
 		$this->debug = $debug;
 	}
 
-	public function setCookie($key = '', $value = '', $expire = 86400) {
+	public function setUserData($key = '', $value = array()) {
 
-		if($key == '') {
-			return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
-		}
+		try {
 
-		$encryption = $this->lib->make('Encryption');
-		$encryption->debug = $this->debug;
-		$encryption->import_key(PUBLIC_KEY);
-		$value = $encryption->encode($value);
+			if($key == '') {
+				return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
+			}
 
-		setcookie($key, $value, time() + $expire);
+			$encryption = $this->lib->make('Encryption');
+			$encryption->import_key(PRIVATE_KEY);
+			
+			$_key = $encryption->inreversible_encode($value, PUBLIC_KEY);
+			$_value = $encryption->encode($value);
+			setcookie($key, $_key, time() + 86400);
+			$_SESSION[$_key] = $_value;
+
+			return true;
+
+		} catch(Exception $e) {
+
+        }
+
 	}
 
-	public function removeCookie($key = '', $value = '', $expire = 86400) {
+	public function getUserData($key = '') {
 
-		if($key == '') {
-			return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
-		}
+		try {
 
-		setcookie($key, '', time() - $expire);
+			if($key == '') {
+				return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
+			}
+
+			if(!isset($_COOKIE[$key])) {
+				return $this->debug ? array('message' => "Undefined index: {$key}", 'status' => false, 'value' => array('key' => $key)) : false;	
+			}
+
+			$encryption = $this->lib->make('Encryption');
+			$encryption->import_key(PRIVATE_KEY);
+
+			$data = $encryption->decode($_SESSION[$_COOKIE[$key]]);
+
+			return $data;
+
+		} catch(Exception $e) {
+
+        }
+
 	}
 
-	public function getCookie($key) {
+	public function removeUserData($key = '') {
 
-		if($key == '') {
-			return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
-		}
+		try {
 
-		$encryption = $this->lib->make('Encryption');
-		$encryption->import_key(PUBLIC_KEY);
-		$encryption->debug = $this->debug;
-		$value = $encryption->decode($_COOKIE[$key]);
+			if($key == '') {
+				return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
+			}		
 
-		return $value;
-		
-	}
+			if(!isset($_COOKIE[$key])) {
+				return $this->debug ? array('message' => "Undefined index: {$key}", 'status' => false, 'value' => array('key' => $key)) : false;	
+			}
 
-	public function setSession($key = '', $value = '') {
+			unset($_SESSION[$_COOKIE[$key]]);
+			setcookie($key, '', time() - 86400);
 
-		if($key == '') {
-			return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
-		}
+			return true;
 
-		$encryption = $this->lib->make('Encryption');
-		$encryption->import_key(PUBLIC_KEY);
-		$encryption->debug = $this->debug;
-		$value = $encryption->encode($value);
+		} catch(Exception $e) {
 
-		$_SESSION[$key] = $value;
-	}
-
-	public function removeSession($key = '', $value = '') {
-
-		if($key == '') {
-			return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
-		}
-
-		unset($_SESSION[$key]);
-	}
-
-	public function getSession($key) {
-
-		if($key == '') {
-			return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
-		}
-
-		$encryption = $this->lib->make('Encryption');
-		$encryption->import_key(PUBLIC_KEY);
-		$encryption->debug = $this->debug;
-		$value = $encryption->decode($_SESSION[$key]);
-
-		return $value;
-		
+        }
+        
 	}
 
 	public function assign($key = '', $value = '') {
