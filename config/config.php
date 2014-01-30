@@ -12,7 +12,6 @@ define('ACCOUNT', '');
 define('PASSWORD', '');
 define('DATABASE', '');
 
-define('USE', 'postnatal');
 define('PUBLIC_KEY', '1234567890');
 define('PRIVATE_KEY', '!QAZSE$RFVGY&UJMKO)P:?');
 ?>
