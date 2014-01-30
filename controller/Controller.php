@@ -26,6 +26,82 @@ class Controller {
 		$this->debug = $debug;
 	}
 
+	public function setCookie($key = '', $value = '', $expire = 86400) {
+
+		if($key == '') {
+			return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
+		}
+
+		$encryption = $this->lib->make('Encryption');
+		$encryption->debug = $this->debug;
+		$encryption->import_key(PUBLIC_KEY);
+		$value = $encryption->encode($value);
+
+		setcookie($key, $value, time() + $expire);
+	}
+
+	public function removeCookie($key = '', $value = '', $expire = 86400) {
+
+		if($key == '') {
+			return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
+		}
+
+		setcookie($key, '', time() - $expire);
+	}
+
+	public function getCookie($key) {
+
+		if($key == '') {
+			return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
+		}
+
+		$encryption = $this->lib->make('Encryption');
+		$encryption->import_key(PUBLIC_KEY);
+		$encryption->debug = $this->debug;
+		$value = $encryption->decode($_COOKIE[$key]);
+
+		return $value;
+		
+	}
+
+	public function setSession($key = '', $value = '') {
+
+		if($key == '') {
+			return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
+		}
+
+		$encryption = $this->lib->make('Encryption');
+		$encryption->import_key(PUBLIC_KEY);
+		$encryption->debug = $this->debug;
+		$value = $encryption->encode($value);
+
+		$_SESSION[$key] = $value;
+	}
+
+	public function removeSession($key = '', $value = '') {
+
+		if($key == '') {
+			return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
+		}
+
+		unset($_SESSION[$key]);
+	}
+
+	public function getSession($key) {
+
+		if($key == '') {
+			return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key)) : false;
+		}
+
+		$encryption = $this->lib->make('Encryption');
+		$encryption->import_key(PUBLIC_KEY);
+		$encryption->debug = $this->debug;
+		$value = $encryption->decode($_SESSION[$key]);
+
+		return $value;
+		
+	}
+
 	public function assign($key = '', $value = '') {
 
 		try {
