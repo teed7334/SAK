@@ -93,6 +93,9 @@ class Encryption {
                 }
             }
 
+            $string = gzdeflate($string, 9);
+            $string = base64_encode($string);
+
             return $string;
 
         } catch(Exception $e) {
@@ -104,6 +107,9 @@ class Encryption {
     public function decode($string = '') {
 
         try {
+
+            $string = base64_decode($string);
+            $string = gzinflate($string);
         
             $arr = explode($this->delimiter, $string);
             $count = count($arr);
