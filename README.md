@@ -1,4 +1,4 @@
 SAK
 ===
 
-A simple MVCC (Model + View + PHP Controller + JS Controller) Framework
+A simple MVCC  Framework (Model + View + PHP Controller + JS Controller)
