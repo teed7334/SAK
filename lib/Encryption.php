@@ -1,6 +1,7 @@
 <?php
 class Encryption {
 
+    protected $delimiter = '.';
     protected $hash = array(
             array(1, 17, 13, 25, 44, 6, 33, 12),
             array(43, 58, 49, 17, 28, 47, 31, 45),
@@ -24,6 +25,27 @@ class Encryption {
         $this->length = count($this->use);
     }
 
+    public function hash2base64() {
+
+        try {
+
+            $base64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
+            $base64 = str_split($base64);
+
+            for($i = 0; $i < $this->length; $i++) {
+                $this->use[$i] = $base64[$this->use[$i]];
+            }
+
+        } catch(Exception $e) {
+
+        }
+
+    }
+
+    public function setDelimiter($delimiter = '.') {
+        $this->delimiter = $delimiter;
+    }
+
     public function setHash($hash = array()) {
 
         try {
@@ -37,6 +59,7 @@ class Encryption {
         } catch(Exception $e) {
 
         }
+
     } 
 
     public function encode_once($string = '') {
@@ -44,7 +67,7 @@ class Encryption {
         try {
 
             return md5(sha1($this->encode($string)));
-            
+
         } catch(Exception $e) {
 
         }
@@ -55,7 +78,7 @@ class Encryption {
 
         try {
 
-            $string = base64_encode(serialize($string));
+            $string = base64_encode($string);
             $arr = str_split($string);
 
             $string = '';
@@ -64,9 +87,9 @@ class Encryption {
                 $value = floor(ord($char) / $this->length);
 
                 if($string == '') {
-                    $string .= "{$this->use[$key]}.{$value}";
+                    $string .= $this->use[$key] . $this->delimiter . $value;
                 } else {
-                    $string .= ".{$this->use[$key]}.{$value}";
+                    $string .= $this->delimiter . $this->use[$key] . $this->delimiter . $value;
                 }
             }
 
@@ -82,7 +105,7 @@ class Encryption {
 
         try {
         
-            $arr = explode('.', $string);
+            $arr = explode($this->delimiter, $string);
             $count = count($arr);
 
             $string = '';
@@ -105,7 +128,7 @@ class Encryption {
                 }
             }
 
-            $string = unserialize(base64_decode($string));
+            $string = base64_decode($string);
 
             return $string;
 
