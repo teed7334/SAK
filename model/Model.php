@@ -2,6 +2,7 @@
 class Model {
 
 	protected $mysql = NULL;
+	protected $debug = false;
 
 	public function __construct() {
 
@@ -16,6 +17,11 @@ class Model {
 
         }
 		
+	}
+
+	public function debug($debug = false) {
+		$this->debug = $debug;
+		$this->mysql->debug($this->debug);
 	}
 
 }
