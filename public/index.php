@@ -6,6 +6,9 @@ include_once(LIB . '/Factory.php');
 include_once(CONTROLLER . '/Controller.php');
 include_once(MODEL . '/Model.php');
 
+date_default_timezone_set(TIME_ZONE);
+error_reporting(ERROR_REPORT);
+
 $lib = new Factory();
 $lib->setDirectory(LIB);
 $router = $lib->make('Router');
