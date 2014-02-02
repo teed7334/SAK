@@ -1,6 +1,8 @@
 <?php
 class Encryption {
 
+    protected $debug = false;
+    
     protected $delimiter = '.';
     protected $hash = array(
             array(1, 17, 13, 25, 44, 6, 33, 12),
@@ -23,6 +25,10 @@ class Encryption {
         $this->index = ((int)date('Y') + (int)date('m') + (int)date('d')) % (int)$this->parent_length;
         $this->use = $this->hash[$this->index];
         $this->length = count($this->use);
+    }
+
+    public function debug($debug = false) {
+        $this->debug = $debug;
     }
 
     public function hash2base64() {
@@ -108,11 +114,25 @@ class Encryption {
 
         try {
 
+            $str = $string;
             $string = base64_decode($string);
-            $string = gzinflate($string);
+
+            if(trim($string) == '') {
+                return $this->debug ? array('message' => "error string {$str}(1)", 'status' => false, 'value' => array('string' => $str)) : false;
+            }
+
+            $string = @gzinflate($string);
+
+            if(trim($string) == '') {
+                return $this->debug ? array('message' => "can't uncompress {$str}", 'status' => false, 'value' => array('string' => $str)) : false;
+            }            
         
             $arr = explode($this->delimiter, $string);
             $count = count($arr);
+
+            if($count == 0) {
+                return $this->debug ? array('message' => "error string {$str}(2)", 'status' => false, 'value' => array('string' => $str)) : false;
+            }
 
             $string = '';
             $ascii = 0;
@@ -135,6 +155,10 @@ class Encryption {
             }
 
             $string = base64_decode($string);
+
+            if(trim($string) == '') {
+                return $this->debug ? array('message' => "error string {$str}(3)", 'status' => false, 'value' => array('string' => $str)) : false;
+            }
 
             return $string;
 
