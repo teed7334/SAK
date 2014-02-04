@@ -31,23 +31,6 @@ class Encryption {
         $this->debug = $debug;
     }
 
-    public function hash2base64() {
-
-        try {
-
-            $base64 = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/';
-            $base64 = str_split($base64);
-
-            for($i = 0; $i < $this->length; $i++) {
-                $this->use[$i] = $base64[$this->use[$i]];
-            }
-
-        } catch(Exception $e) {
-
-        }
-
-    }
-
     public function setDelimiter($delimiter = '.') {
         $this->delimiter = $delimiter;
     }

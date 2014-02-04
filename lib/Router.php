@@ -12,36 +12,32 @@ class Router {
             $_GET['action'] = 'index';
 
         	$uri = explode('?', $_SERVER['REQUEST_URI']);
+            
+            $uri[0] = explode('/', $uri[0]);
+        	$count = count($uri[0]);
 
-            if(count($uri) == 1) {
-                
-            	$count = count($uri);
+        	for($i = 0; $i < $count; $i++) {
+                if(trim($uri[0][$i]) != '') {
+            		if($i == 1) {
+            			$_GET['controller'] = (string)filter_var($uri[0][$i], FILTER_SANITIZE_STRING);
+            		} elseif($i == 2) {
+            			$_GET['action'] = (string)filter_var($uri[0][$i], FILTER_SANITIZE_STRING);
+            		} elseif($i > 2) {
+            			if($i % 2 != 0) {
+            				$_GET[(string)filter_var($uri[0][$i], FILTER_SANITIZE_STRING)] = NULL;
+            			} else {
+            				$_GET[$uri[0][$i - 1]] = (string)filter_var($uri[0][$i], FILTER_SANITIZE_STRING);
+            			}
+            		}
+                }
+        	}
 
-            	for($i = 0; $i < $count; $i++) {
-                    if(trim($uri[$i]) != '') {
-                		if($i == 1) {
-                			$_GET['controller'] = (string) filter_var($uri[$i], FILTER_SANITIZE_STRING);
-                		} elseif($i == 2) {
-                			$_GET['action'] = (string) filter_var($uri[$i], FILTER_SANITIZE_STRING);
-                		} elseif($i > 2) {
-                			if($i % 2 != 0) {
-                				$_GET[(string) filter_var($uri[$i], FILTER_SANITIZE_STRING)] = NULL;
-                			} else {
-                				$_GET[$uri[$i - 1]] = (string) filter_var($uri[$i], FILTER_SANITIZE_STRING);
-                			}
-                		}
-                    }
-            	}
-
-            }
-
-            $uri = explode('?', $_SERVER['REQUEST_URI']);
             $uri = explode('&', $uri[1]);
 
             foreach($uri as $items) {
                 $get = explode('=', $items);
                 if(trim($get[0]) != '' && trim($get[1]) != '') {
-                    $_GET[(string) filter_var($get[0], FILTER_SANITIZE_STRING)] = (string) filter_var($get[1], FILTER_SANITIZE_STRING);;
+                    $_GET[(string)filter_var($get[0], FILTER_SANITIZE_STRING)] = (string)filter_var($get[1], FILTER_SANITIZE_STRING);;
                 }
             }
 
