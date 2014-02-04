@@ -28,7 +28,7 @@ class CURL {
 			curl_close($ch);
 
 			if(!$result) {
-				return $this->debug ? array('message' => "http get error", 'status' => false, 'value' => array('url' => $str, 'params' => $params)) : false;
+				return $this->debug ? array('message' => "http get error", 'status' => false, 'value' => array('url' => $url, 'params' => $params)) : false;
 			}
 
 			return $result;
@@ -51,7 +51,7 @@ class CURL {
 			curl_close($ch);
 
 			if(!$result) {
-				return $this->debug ? array('message' => "http post error", 'status' => false, 'value' => array('url' => $str, 'params' => $params)) : false;
+				return $this->debug ? array('message' => "http post error", 'status' => false, 'value' => array('url' => $url, 'params' => $params)) : false;
 			}
 
 			return $result;
@@ -59,7 +59,7 @@ class CURL {
 		} catch(Exception $e) {
 
 		}
-		
+
 	}
 }
 ?>
