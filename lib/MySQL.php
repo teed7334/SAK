@@ -22,15 +22,15 @@ class MySQL{
 			$this->adapter = @mysql_pconnect($host, $user, $password);
 
 			if(!$this->adapter) {
-				return $this->debug ? array('message' => "Can't connect to MySQL server on Host = {$host}, User = {$user}, Password = {$password}", 'status' => false, 'value' => array('host' => $host, 'user' => $user, 'password' => $password)) : false;
+				return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('host' => $host, 'user' => $user, 'password' => $password)) : false;
 			}
 		
 			if(!mysql_select_db($database, $this->adapter)) {
-				return $this->debug ? array('message' => "Can't choose to Database on Database = {$database}", 'status' => false, 'value' => array('database' => $database)) : false;
+				return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('database' => $database)) : false;
 			}
 
 			if(!mysql_query('SET NAMES utf8', $this->adapter) || !mysql_query('SET CHARACTER_SET_CLIENT  = utf8', $this->adapter) || !mysql_query('SET CHARACTER_SET_RESULTS = utf8', $this->adapter)) {
-				return $this->debug ? array('message' => "Can't set UTF-8 to Database", 'status' => false, 'value' => '') : false;
+				return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => '') : false;
 			}
 			
 			return true;
@@ -54,7 +54,7 @@ class MySQL{
 			$result = mysql_query($sql, $this->adapter);
 
 			if(!$result) {
-				return $this->debug ? array('message' => "Can't choose table to Database", 'status' => false, 'value' => array('table' => $Table)) : false;	
+				return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('table' => $Table)) : false;	
 			}
 
 			while($record = mysql_fetch_assoc($result)) {
@@ -111,7 +111,7 @@ class MySQL{
 				$result = mysql_query($sql, $this->adapter);
 
 				if(!$result) {
-					return $this->debug ? array('message' => "You have an error in your SQL syntax SQL={$sql}", 'status' => false, 'value' => array('order' => $order, 'group' => $group, 'limit' => $limit, 'sql' => $sql)) : false;	
+					return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('order' => $order, 'group' => $group, 'limit' => $limit, 'sql' => $sql)) : false;	
 				}
 
 				$data = array();
@@ -172,7 +172,7 @@ class MySQL{
 				$result = mysql_query($sql, $this->adapter);
 
 				if(!$result) {
-					return $this->debug ? array('message' => "You have an error in your SQL syntax SQL={$sql}", 'status' => false, 'value' => array('where' => $where, 'sql' => $sql)) : false;	
+					return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('where' => $where, 'sql' => $sql)) : false;	
 				}
 
 				return true;
@@ -215,7 +215,7 @@ class MySQL{
 				$result = mysql_query($sql, $this->adapter);
 
 				if(!$result) {
-					return $this->debug ? array('message' => "You have an error in your SQL syntax SQL={$sql}", 'status' => false, 'value' => array('sql' => $sql)) : false;	
+					return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('sql' => $sql)) : false;	
 				}
 
 				$primary_id = mysql_insert_id($this->adapter);
@@ -260,7 +260,7 @@ class MySQL{
 				$result = mysql_query($sql, $this->adapter);
 
 				if(!$result) {
-					return $this->debug ? array('message' => "You have an error in your SQL syntax SQL={$sql}", 'status' => false, 'value' => array('sql' => $sql)) : false;	
+					return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('sql' => $sql)) : false;	
 				}
 
 				return true;
@@ -323,7 +323,7 @@ class MySQL{
 				$result = mysql_query($this->sql, $this->adapter);
 
 				if(!$result) {
-					return $this->debug ? array('message' => "You have an error in your SQL syntax SQL={$sql}", 'status' => false, 'value' => array('sql' => $this->sql)) : false;	
+					return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('sql' => $this->sql)) : false;	
 				}
 
 				while($record = mysql_fetch_assoc($result)) {
@@ -337,7 +337,7 @@ class MySQL{
 				$result = mysql_query($this->sql, $this->adapter);
 
 				if(!$result) {
-					return $this->debug ? array('message' => "You have an error in your SQL syntax SQL={$sql}", 'status' => false, 'value' => array('sql' => $this->sql)) : false;	
+					return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('sql' => $this->sql)) : false;	
 				}
 
 				$data = mysql_insert_id($this->adapter);
@@ -347,7 +347,7 @@ class MySQL{
 				$result = mysql_query($this->sql, $this->adapter);
 
 				if(!$result) {
-					return $this->debug ? array('message' => "You have an error in your SQL syntax SQL={$sql}", 'status' => false, 'value' => array('sql' => $this->sql)) : false;
+					return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('sql' => $this->sql)) : false;
 				}
 
 				$data = true;
