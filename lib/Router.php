@@ -11,7 +11,14 @@ class Router {
             $_GET['controller'] = 'index';
             $_GET['action'] = 'index';
 
-        	$uri = explode('?', $_SERVER['REQUEST_URI']);
+            $uri = $_SERVER['REQUEST_URI'];
+
+            if(CHROOT != '') {
+                $uri = explode(CHROOT, $_SERVER['REQUEST_URI']);
+                $uri = $uri[1];
+            }
+
+            $uri = explode('?', $uri);
             
             $uri[0] = explode('/', $uri[0]);
         	$count = count($uri[0]);
