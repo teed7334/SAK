@@ -51,11 +51,11 @@ class Encryption {
 
     } 
 
-    public function encode_once($string = '') {
+    public function one_off_encode($string = '') {
 
         try {
 
-            return md5(sha1($this->encode($string)));
+            return md5(sha1($string));
 
         } catch(Exception $e) {
 
@@ -82,7 +82,7 @@ class Encryption {
                 }
             }
 
-            $string = gzdeflate($string, 9);
+            $string = @gzdeflate($string, 9);
             $string = base64_encode($string);
 
             return $string;

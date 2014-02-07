@@ -26,6 +26,34 @@ class Controller {
 		$this->debug = $debug;
 	}
 
+	public function getClientIP() {
+
+		try {
+
+			$ip = false;
+
+			if(getenv('HTTP_CLIENT_IP')) {
+			    $ip = getenv('HTTP_CLIENT_IP');
+			} else if(getenv('HTTP_X_FORWARDED_FOR')) {
+			    $ip = getenv('HTTP_X_FORWARDED_FOR');
+			} else if(getenv('HTTP_X_FORWARDED')) {
+			    $ip = getenv('HTTP_X_FORWARDED');
+			} else if(getenv('HTTP_FORWARDED_FOR')) {
+			    $ip = getenv('HTTP_FORWARDED_FOR');
+			} else if(getenv('HTTP_FORWARDED')) {
+			    $ip = getenv('HTTP_FORWARDED');
+			} else if(getenv('REMOTE_ADDR')) {
+			    $ip = getenv('REMOTE_ADDR');
+			}
+
+			return $ip;
+		
+		} catch(Exception $e) {
+
+		}
+
+	}
+
 	public function setCookie($key = '', $value = '') {
 
 		try {
@@ -35,6 +63,7 @@ class Controller {
 			}
 			
 			$encryption = $this->lib->make('Encryption');
+			$encryption->debug($this->debug);
 			setcookie($key, $encryption->encode($value), time() + 86400);
 
 			return true;
@@ -54,6 +83,7 @@ class Controller {
 			}
 
 			$encryption = $this->lib->make('Encryption');
+			$encryption->debug($this->debug);
 
 			return $encryption->decode($_COOKIE[$key]);
 			
@@ -90,6 +120,7 @@ class Controller {
 			}
 			
 			$encryption = $this->lib->make('Encryption');
+			$encryption->debug($this->debug);
 			$_SESSION[$key] = $encryption->encode($value);
 
 			return true;
@@ -109,6 +140,7 @@ class Controller {
 			}
 
 			$encryption = $this->lib->make('Encryption');
+			$encryption->debug($this->debug);
 			return $encryption->decode($_SESSION[$key]);
 			
 		} catch(Exception $e) {
