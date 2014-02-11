@@ -16,27 +16,27 @@ class MySQL{
 		try {
 
 			if($host == '' || $user == '' || $database == '') {
-				return $this->debug ? array('message' => "Is null", 'status' => false, 'value' => array('host' => $host, 'user' => $user, 'database' => $database)) : false;
+				throw new Exception(mysql_error());
 			}
 			
 			$this->adapter = @mysql_pconnect($host, $user, $password);
 
 			if(!$this->adapter) {
-				return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('host' => $host, 'user' => $user, 'password' => $password)) : false;
+				throw new Exception(mysql_error());
 			}
 		
 			if(!mysql_select_db($database, $this->adapter)) {
-				return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('database' => $database)) : false;
+				throw new Exception(mysql_error());
 			}
 
 			if(!mysql_query('SET NAMES utf8', $this->adapter) || !mysql_query('SET CHARACTER_SET_CLIENT  = utf8', $this->adapter) || !mysql_query('SET CHARACTER_SET_RESULTS = utf8', $this->adapter)) {
-				return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => '') : false;
+				throw new Exception(mysql_error());
 			}
 			
 			return true;
 			
 		} catch(Exception $e) {
-		
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('host' => $host, 'user' => $user, 'password' => $password, 'database' => $database)) : false;
 		}
 	}
 
@@ -46,7 +46,7 @@ class MySQL{
 			$this->_free_table();
 
 			if($Table == '') {
-				return $this->debug ? array('message' => "Is null", 'status' => false, 'value' => array('table' => $Table)) : false;	
+				throw new Exception('Is null');
 			}
 
 			$sql = sprintf('SHOW COLUMNS FROM %s', mysql_real_escape_string($Table));
@@ -54,7 +54,7 @@ class MySQL{
 			$result = mysql_query($sql, $this->adapter);
 
 			if(!$result) {
-				return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('table' => $Table)) : false;	
+				throw new Exception(mysql_error());
 			}
 
 			while($record = mysql_fetch_assoc($result)) {
@@ -69,7 +69,7 @@ class MySQL{
 			return array($this->table => $this->columns);
 
 		} catch(Exception $e) {
-		
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('Table' => $Table)) : false;
 		}
 	}
 	
@@ -111,7 +111,7 @@ class MySQL{
 				$result = mysql_query($sql, $this->adapter);
 
 				if(!$result) {
-					return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('order' => $order, 'group' => $group, 'limit' => $limit, 'sql' => $sql)) : false;	
+					throw new Exception(mysql_error());
 				}
 
 				$data = array();
@@ -128,11 +128,11 @@ class MySQL{
 			}
 
 		} catch(Exception $e) {
-			
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('order' => $order, 'group' => $group, 'limit' => $limit)) : false;
 		}
 	}
 
-	public function modify($where = array()) {
+	public function save($where = array()) {
 		
 		try {
 
@@ -162,7 +162,7 @@ class MySQL{
 				}
 
 				if($_set == '' || $_where == '') {
-					return false;
+					throw new Exception('Is null');
 				}
 
 				$sql .= "{$_set} {$_where}";
@@ -172,18 +172,18 @@ class MySQL{
 				$result = mysql_query($sql, $this->adapter);
 
 				if(!$result) {
-					return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('where' => $where, 'sql' => $sql)) : false;	
+					throw new Exception(mysql_error());
 				}
 
 				return true;
 			}
 
 		} catch(Exception $e) {
-			
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('where' => $where)) : false;
 		}
 	}
 	
-	public function insert() {
+	public function add() {
 
 		try {
 
@@ -207,7 +207,7 @@ class MySQL{
 				}
 
 				if($_column == '' || $_value == '') {
-					return false;
+					throw new Exception('Is null');
 				}
 
 				$sql .= "({$_column}) VALUES ({$_value})";
@@ -215,7 +215,7 @@ class MySQL{
 				$result = mysql_query($sql, $this->adapter);
 
 				if(!$result) {
-					return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('sql' => $sql)) : false;	
+					throw new Exception(mysql_error());
 				}
 
 				$primary_id = mysql_insert_id($this->adapter);
@@ -227,7 +227,7 @@ class MySQL{
 			}
 
 		} catch(Exception $e) {
-			
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('_column' => $_column, '_value' => $_value)) : false;
 		}	
 	}
 
@@ -260,7 +260,7 @@ class MySQL{
 				$result = mysql_query($sql, $this->adapter);
 
 				if(!$result) {
-					return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('sql' => $sql)) : false;	
+					throw new Exception(mysql_error());
 				}
 
 				return true;
@@ -268,7 +268,7 @@ class MySQL{
 			}
 
 		} catch(Exception $e) {
-			
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('_where' => $_where)) : false;
 		}
 	}
 
@@ -283,7 +283,7 @@ class MySQL{
 			$count = count($params);
 			
 			if((count($split) -1) != $count) {
-				return false;
+				throw new Exception('params error');
 			}
 
 			for($i = 0; $i < $count; $i++) {
@@ -303,7 +303,7 @@ class MySQL{
 			return $_sql;
 
 		} catch(Exception $e) {
-			
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('sql' => $sql, 'params' => $params, 'delimiter' => $delimiter)) : false;
 		}
 	}
 
@@ -312,7 +312,7 @@ class MySQL{
 		try {
 			
 			if($this->sql == '') {
-				return $this->debug ? array('message' => "Is null", 'status' => false, 'value' => '') : false;
+				throw new Exception('Is null');
 			}
 
 			$mode = strtoupper(trim($this->sql));
@@ -323,7 +323,7 @@ class MySQL{
 				$result = mysql_query($this->sql, $this->adapter);
 
 				if(!$result) {
-					return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('sql' => $this->sql)) : false;	
+					throw new Exception(mysql_error());
 				}
 
 				while($record = mysql_fetch_assoc($result)) {
@@ -337,7 +337,7 @@ class MySQL{
 				$result = mysql_query($this->sql, $this->adapter);
 
 				if(!$result) {
-					return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('sql' => $this->sql)) : false;	
+					throw new Exception(mysql_error());
 				}
 
 				$data = mysql_insert_id($this->adapter);
@@ -347,7 +347,7 @@ class MySQL{
 				$result = mysql_query($this->sql, $this->adapter);
 
 				if(!$result) {
-					return $this->debug ? array('message' => mysql_error(), 'status' => false, 'value' => array('sql' => $this->sql)) : false;
+					throw new Exception(mysql_error());
 				}
 
 				$data = true;
@@ -357,42 +357,28 @@ class MySQL{
 			return $data;
 
 		} catch(Exception $e) {
-			
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('sql' => $this->sql)) : false;
 		}	
 	}
 
 	protected function _clear() {
-
-		try {
-
-			$this->sql = '';
-			foreach($this->columns as $items) {
-				$this->{$items} = NULL;
-			}
-
-		} catch(Exception $e) {
-			
+		$this->sql = '';
+		foreach($this->columns as $items) {
+			$this->{$items} = NULL;
 		}
 	}
 
 	protected function _free_table() {
-
-		try {
-
-			if(count($this->columns) == 0) {
-				return false;
-			}
-
-			foreach($this->columns as $items) {
-				unset($this->{$items});
-			}
-
-			$this->columns = array();
-
-			return true;
-			
-		} catch(Exception $e) {
-			
+		if(count($this->columns) == 0) {
+			return false;
 		}
+
+		foreach($this->columns as $items) {
+			unset($this->{$items});
+		}
+
+		$this->columns = array();
+
+		return true;
 	}
 }

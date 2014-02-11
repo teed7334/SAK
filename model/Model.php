@@ -5,18 +5,10 @@ class Model {
 	protected $debug = false;
 
 	public function __construct() {
-
-		try {
-
-			$lib = new Factory();
-			$lib->setDirectory(LIB);
-			$this->mysql = $lib->make('MySQL'); 
-			$this->mysql->setAdapter(HOST, ACCOUNT, PASSWORD, DATABASE);
-
-		} catch(Exception $e) {
-
-        }
-		
+		$lib = new Factory();
+		$lib->setDirectory(LIB);
+		$this->mysql = $lib->make('MySQL'); 
+		$this->mysql->setAdapter(HOST, ACCOUNT, PASSWORD, DATABASE);
 	}
 
 	public function debug($debug = false) {
