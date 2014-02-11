@@ -28,7 +28,7 @@ class CURL {
 			$result = curl_exec($ch);
 
 			if(!$result) {
-				return $this->debug ? array('message' => curl_error($ch), 'status' => false, 'value' => array('url' => $url, 'params' => $params)) : false;
+				throw new Exception(curl_error($ch));
 			}
 
 			curl_close($ch);
@@ -36,7 +36,7 @@ class CURL {
 			return $result;
 
 		} catch(Exception $e) {
-
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('url' => $url, 'params' => $params, 'options' => $options)) : false;
 		}
 
 	}
@@ -53,7 +53,7 @@ class CURL {
 			$result = curl_exec($ch);
 
 			if(!$result) {
-				return $this->debug ? array('message' => curl_error($ch), 'status' => false, 'value' => array('url' => $url, 'params' => $params)) : false;
+				throw new Exception(curl_error($ch));
 			}
 
 			curl_close($ch);
@@ -61,7 +61,7 @@ class CURL {
 			return $result;
 
 		} catch(Exception $e) {
-
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('url' => $url, 'params' => $params, 'options' => $options)) : false;
 		}
 
 	}
