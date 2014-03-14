@@ -15,6 +15,5 @@ define('DATABASE', '');
 define('PRIVATE_KEY', '!QAZSE$RFVGY&UJMKO)P:?');
 
 define('TIME_ZONE', 'Asia/Taipei');
-define('ERROR_REPORT', 'E_ALL');
 define('CHROOT', '');
 ?>
