@@ -42,6 +42,66 @@ class Controller {
 		return $ip;
 	}
 
+	public function post($accept = array(), $filter = FALSE) {
+	
+		$check = count($accept);
+		$data = array();
+
+		if($filter) {
+			$Filter = $this->lib->make('Filter');
+		}
+		
+		if($check > 0) {
+			foreach($accept as $value) {
+				if(isset($_POST[$value])) {
+					$data[$value] = $filter ? $Filter->string($_POST[$value]) : $_POST[$value];
+					$check--;
+				}
+			}
+		} else {
+			foreach($_POST as $key => $value) {
+				$data[$key] = $filter ? $Filter->string($_POST[$value]) : $value;
+			}
+			$check = 0;
+		}
+		
+		if($check == 0) {
+			return $data;
+		}
+
+		return false;
+	}
+
+	public function get($accept = array(), $filter = FALSE) {
+		
+		$check = count($accept);
+		$data = array();
+
+		if($filter) {
+			$Filter = $this->lib->make('Filter');
+		}
+		
+		if($check > 0) {
+			foreach($accept as $value) {
+				if(isset($_GET[$value])) {
+					$data[$value] = $filter ? $Filter->string($_GET[$value]) : $_GET[$value];
+					$check--;
+				}
+			}
+		} else {
+			foreach($_GET as $key => $value) {
+				$data[$key] = $filter ? $Filter->string($_GET[$value]) : $value;
+			}
+			$check = 0;
+		}
+		
+		if($check == 0) {
+			return $data;
+		}
+
+		return false;
+	}
+
 	public function setCookie($key = '', $value = '') {
 
 		try {
@@ -62,7 +122,7 @@ class Controller {
 
 	}
 
-	public function getCookie($key = '') {
+	public function getCookie($key = '', $filter = FALSE) {
 
 		try {
 			
@@ -73,10 +133,14 @@ class Controller {
 			$encryption = $this->lib->make('Encryption');
 			$encryption->debug($this->debug);
 
-			return $filter->string($_COOKIE[$key]);
+			if($filter) {
+				$Filter = $this->lib->make('Filter');
+			}
+
+			return $filter ? $Filter->string($_COOKIE[$key]) : $_COOKIE[$key];
 			
 		} catch(Exception $e) {
-			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('key' => $key)) : false;
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('key' => $key, 'filter' => $filter)) : false;
 		}
 
 	}
@@ -119,7 +183,7 @@ class Controller {
 
 	}
 
-	public function getSession($key = '') {
+	public function getSession($key = '', $filter = FALSE) {
 
 		try {
 			
@@ -129,10 +193,15 @@ class Controller {
 
 			$encryption = $this->lib->make('Encryption');
 			$encryption->debug($this->debug);
-			return $encryption->decode($_SESSION[$key]);
+
+			if($filter) {
+				$Filter = $this->lib->make('Filter');
+			}
+
+			return $filter ? $Filter->string($_SESSION[$key]) : $_SESSION[$key];
 			
 		} catch(Exception $e) {
-			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('key' => $key)) : false;
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('key' => $key, 'filter' => $filter)) : false;
 		}
 
 	}
