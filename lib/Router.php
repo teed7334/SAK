@@ -67,19 +67,19 @@ class Router {
             $controller = CONTROLLER . "/{$_GET['controller']}.php";
 
             if(!file_exists($controller)) {
-                return $this->debug ? array('message' => "Failed opening '{$controller}' for inclusion", 'status' => false, 'value' => $controller) : false;
+                throw new Exception("Failed opening '{$controller}' for inclusion");
             }
 
             include_once($controller);
 
             if(!class_exists($_GET['controller'])) {
-                return $this->debug ? array('message' => "Class '{$_GET['controller']}' not found", 'status' => false, 'value' => $_GET['controller']) : false;
+                throw new Exception("Class '{$_GET['controller']}' not found");
             }
 
             eval('$controller = ' . "new {$_GET['controller']}();");
 
             if(!method_exists($controller, "action_{$_GET['action']}")) {
-                return $this->debug ? array('message' => "Call to undefined action action_{$_GET['action']}()", 'status' => false, 'value' => $_GET['action']) : false;
+                throw new Exception("Call to undefined action action_{$_GET['action']}()");
             }
 
             eval('$controller->' . "action_{$_GET['action']}();");
@@ -87,7 +87,7 @@ class Router {
             return true;
 
         } catch(Exception $e) {
-        
+            return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('controller' => $_GET['controller'], 'action' => $_GET['action'])) : false;
         }
 
     }
@@ -99,7 +99,7 @@ class Router {
             $js_controller = JS_CONTROLLER . "/{$_GET['controller']}.js";
 
             if(!file_exists($js_controller)) {
-                return $this->debug ? array('message' => "Failed opening '{$js_controller}' for inclusion", 'status' => false, 'value' => $js_controller) : false;
+                throw new Exception("Failed opening '{$js_controller}' for inclusion");
             }
 
             if(isset($_SERVER['js_controller'])) {
@@ -109,9 +109,9 @@ class Router {
                     $value = json_encode($value);
 
                     if(trim($key) == '') {
-                        return $this->debug ? array('message' => "Is null", 'status' => false, 'value' => $key) : false;          
+                        throw new Exception("Is null");
                     } elseif($key == 'console_log') {
-                        echo "console.log(eval({$value}));\n";
+                        echo "console.log(JSON.parse({$value}));\n";
                     } else {
                         if($value == '') {
                             echo "var {$key} = '';\n";    
@@ -132,7 +132,7 @@ class Router {
             return true;
 
         } catch(Exception $e) {
-        
+            return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('params' => $_SERVER['js_controller'])) : false;
         }
 
     }
