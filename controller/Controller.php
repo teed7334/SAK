@@ -52,8 +52,7 @@ class Controller {
 			
 			$encryption = $this->lib->make('Encryption');
 			$encryption->debug($this->debug);
-			$filter = $this->lib->make('Filter');
-			setcookie($key, $encryption->encode($filter->string($value)), time() + 86400);
+			setcookie($key, $encryption->encode($value), time() + 86400);
 
 			return true;
 
@@ -73,9 +72,8 @@ class Controller {
 
 			$encryption = $this->lib->make('Encryption');
 			$encryption->debug($this->debug);
-			$filter = $this->lib->make('Filter');
 
-			return $filter->string($encryption->decode($_COOKIE[$key]));
+			return $filter->string($_COOKIE[$key]);
 			
 		} catch(Exception $e) {
 			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('key' => $key)) : false;
