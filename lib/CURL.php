@@ -24,7 +24,9 @@ class CURL {
 			}
 
 			curl_setopt($ch, CURLOPT_URL, "{$url}{$query}");
-			curl_setopt_array($options);
+			if(count($options) > 0) {
+				curl_setopt_array($options);
+			}
 			$result = curl_exec($ch);
 
 			if(!$result) {
@@ -49,7 +51,9 @@ class CURL {
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_POST, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-			curl_setopt_array($options);
+			if(count($options) > 0) {
+				curl_setopt_array($options);
+			}
 			$result = curl_exec($ch);
 
 			if(!$result) {
