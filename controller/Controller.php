@@ -8,50 +8,38 @@ class Controller {
 	protected $debug = false;
 
 	public function __construct() {
-
-		try {
-
-			$this->lib = new Factory();
-			$this->lib->setDirectory(LIB);
-			$this->model = new Factory();
-			$this->model->setDirectory(MODEL);
-
-		} catch(Exception $e) {
-
-        }
-
+		$this->lib = new Factory();
+		$this->lib->setDirectory(LIB);
+		$this->model = new Factory();
+		$this->model->setDirectory(MODEL);
 	}
 
 	public function debug($debug = false) {
 		$this->debug = $debug;
 	}
 
+	public function securityString($string = '', $start = 0, $length = 0, $encode = 'UTF-8') {
+		return mb_substr(strip_tags($string), $start, $length, $encode);
+	}
+
 	public function getClientIP() {
+		$ip = false;
 
-		try {
-
-			$ip = false;
-
-			if(getenv('HTTP_CLIENT_IP')) {
-			    $ip = getenv('HTTP_CLIENT_IP');
-			} else if(getenv('HTTP_X_FORWARDED_FOR')) {
-			    $ip = getenv('HTTP_X_FORWARDED_FOR');
-			} else if(getenv('HTTP_X_FORWARDED')) {
-			    $ip = getenv('HTTP_X_FORWARDED');
-			} else if(getenv('HTTP_FORWARDED_FOR')) {
-			    $ip = getenv('HTTP_FORWARDED_FOR');
-			} else if(getenv('HTTP_FORWARDED')) {
-			    $ip = getenv('HTTP_FORWARDED');
-			} else if(getenv('REMOTE_ADDR')) {
-			    $ip = getenv('REMOTE_ADDR');
-			}
-
-			return $ip;
-		
-		} catch(Exception $e) {
-
+		if(getenv('HTTP_CLIENT_IP')) {
+		    $ip = getenv('HTTP_CLIENT_IP');
+		} else if(getenv('HTTP_X_FORWARDED_FOR')) {
+		    $ip = getenv('HTTP_X_FORWARDED_FOR');
+		} else if(getenv('HTTP_X_FORWARDED')) {
+		    $ip = getenv('HTTP_X_FORWARDED');
+		} else if(getenv('HTTP_FORWARDED_FOR')) {
+		    $ip = getenv('HTTP_FORWARDED_FOR');
+		} else if(getenv('HTTP_FORWARDED')) {
+		    $ip = getenv('HTTP_FORWARDED');
+		} else if(getenv('REMOTE_ADDR')) {
+		    $ip = getenv('REMOTE_ADDR');
 		}
 
+		return $ip;
 	}
 
 	public function setCookie($key = '', $value = '') {
@@ -59,17 +47,18 @@ class Controller {
 		try {
 
 			if($key == '') {
-				return $this->debug ? array('message' => "undefined index {$key}", 'status' => false, 'value' => array('key' => $key)) : false;
+				throw new Exception("undefined index {$key}");
 			}
 			
 			$encryption = $this->lib->make('Encryption');
 			$encryption->debug($this->debug);
-			setcookie($key, $encryption->encode($value), time() + 86400);
+			$filter = $this->lib->make('Filter');
+			setcookie($key, $encryption->encode($filter->string($value)), time() + 86400);
 
 			return true;
 
 		} catch(Exception $e) {
-
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('key' => $key, 'value' => $value)) : false;
 		}
 
 	}
@@ -79,16 +68,17 @@ class Controller {
 		try {
 			
 			if($key == '' || !isset($_COOKIE[$key])) {
-				return $this->debug ? array('message' => "undefined index {$key}", 'status' => false, 'value' => array('key' => $key)) : false;
+				throw new Exception("undefined index {$key}");
 			}
 
 			$encryption = $this->lib->make('Encryption');
 			$encryption->debug($this->debug);
+			$filter = $this->lib->make('Filter');
 
-			return $encryption->decode($_COOKIE[$key]);
+			return $filter->string($encryption->decode($_COOKIE[$key]));
 			
 		} catch(Exception $e) {
-
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('key' => $key)) : false;
 		}
 
 	}
@@ -98,7 +88,7 @@ class Controller {
 		try {
 			
 			if($key == '' || !isset($_COOKIE[$key])) {
-				return $this->debug ? array('message' => "undefined index {$key}", 'status' => false, 'value' => array('key' => $key)) : false;
+				throw new Exception("undefined index {$key}");
 			}
 
 			setcookie($key, '', time() - 86400);
@@ -106,7 +96,7 @@ class Controller {
 			return true;
 			
 		} catch(Exception $e) {
-
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('key' => $key)) : false;
 		}
 
 	}
@@ -116,7 +106,7 @@ class Controller {
 		try {
 
 			if($key == '') {
-				return $this->debug ? array('message' => "undefined index {$key}", 'status' => false, 'value' => array('key' => $key)) : false;
+				throw new Exception("undefined index {$key}");
 			}
 			
 			$encryption = $this->lib->make('Encryption');
@@ -126,7 +116,7 @@ class Controller {
 			return true;
 
 		} catch(Exception $e) {
-
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('key' => $key, 'value' => $value)) : false;
 		}
 
 	}
@@ -136,7 +126,7 @@ class Controller {
 		try {
 			
 			if($key == '' || !isset($_SESSION[$key])) {
-				return $this->debug ? array('message' => "undefined index {$key}", 'status' => false, 'value' => array('key' => $key)) : false;
+				throw new Exception("undefined index {$key}");
 			}
 
 			$encryption = $this->lib->make('Encryption');
@@ -144,7 +134,7 @@ class Controller {
 			return $encryption->decode($_SESSION[$key]);
 			
 		} catch(Exception $e) {
-
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('key' => $key)) : false;
 		}
 
 	}
@@ -154,7 +144,7 @@ class Controller {
 		try {
 			
 			if($key == '' || !isset($_SESSION[$key])) {
-				return $this->debug ? array('message' => "undefined index {$key}", 'status' => false, 'value' => array('key' => $key)) : false;
+				throw new Exception("undefined index {$key}");
 			}
 
 			unset($_SESSION[$key]);
@@ -162,7 +152,7 @@ class Controller {
 			return true;
 			
 		} catch(Exception $e) {
-
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('key' => $key)) : false;
 		}
 
 	}
@@ -172,7 +162,7 @@ class Controller {
 		try {
 
 			if($key == '' || $value == '') {
-				return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key, 'value' => $value)) : false;
+				throw new Exception('Is null');
 			}
 
 			$this->data[$key] = $value;
@@ -180,7 +170,7 @@ class Controller {
 			return true;
 
 		} catch(Exception $e) {
-
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('key' => $key, 'value' => $value)) : false;
         }
 
 	}
@@ -190,13 +180,13 @@ class Controller {
 		try {
 
 			if($view == '') {
-	            return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => '') : false;
+				throw new Exception('Is null');
 	        }
 
 			$view = VIEW . "/{$view}.php";
 
 			if(!file_exists($view)) {
-	            return $this->debug ? array('message' => "Failed opening '{$view}' for inclusion", 'status' => false, 'value' => $view) : false;
+				throw new Exception("Failed opening '{$view}' for inclusion");
 	        }
 
 	        include_once($view);
@@ -205,7 +195,7 @@ class Controller {
 	        return true;
 
     	} catch(Exception $e) {
-
+    		return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('view' => $view)) : false;
         }
 
 	}
@@ -215,13 +205,13 @@ class Controller {
 		try {
 
 			if($element == '') {
-	            return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => '') : false;
+				throw new Exception('Is null');
 	        }
 
 			$element = ELEMENT . "/{$element}.php";
 
 			if(!file_exists($element)) {
-	            return $this->debug ? array('message' => "Failed opening '{$element}' for inclusion", 'status' => false, 'value' => $element) : false;
+				throw new Exception("Failed opening '{$element}' for inclusion");
 	        }
 
 	        include_once($element);
@@ -230,7 +220,7 @@ class Controller {
 	        return true;
 
     	} catch(Exception $e) {
-
+    		return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('element' => $element)) : false;
         }
 
     }
@@ -240,7 +230,7 @@ class Controller {
 		try {
 
 			if($key == '' || $value == '') {
-				return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => array('key' => $key, 'value' => $value)) : false;
+				throw new Exception('Is null');
 			}
 
 			$_SERVER['js_controller'][$key] = "" . $value;
@@ -248,7 +238,7 @@ class Controller {
 			return true;
 
 		} catch(Exception $e) {
-
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('key' => $key, 'value' => $value)) : false;
         }			
 
 	}
