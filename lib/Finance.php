@@ -30,7 +30,7 @@ class Finance {
 		for($i = 0; $i < $precision; $i++) {
 			$t *= 10;
 		}
-
+		
 		$value = doubleval($value) * $t;
 		$value = ceil($value);
 		$value = $value / $t;
