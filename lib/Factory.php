@@ -10,11 +10,11 @@ class Factory {
         try {
 
             if($path == '') {
-                return $this->debug ? array('message' => 'Is null', 'status' => false, 'value' => $path) : false;
+                throw new Exception('Is null');
             }
 
             if(!is_dir($path)) {
-                return $this->debug ? array('message' => "Directory '{$path}' not found", 'status' => false, 'value' => $path) : false;
+                throw new Exception("Directory '{$path}' not found");
             }
 
             $this->path = $path;
@@ -22,7 +22,7 @@ class Factory {
             return true;
 
         } catch(Exception $e) {
-
+            return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('path' => $path)) : false;
         }
 
     }
@@ -38,7 +38,7 @@ class Factory {
     		$file = "{$this->path}/{$class_name}.php";
 
             if(!file_exists($file)) {
-                return $this->debug ? array('message' => "Failed opening '{$file}' for inclusion", 'status' => false, 'value' => $file) : false;
+                throw new Exception("Failed opening '{$file}' for inclusion");
             }
             
             if(!in_array($class_name, $this->resource)) {
@@ -47,7 +47,7 @@ class Factory {
         	}
 
             if(!class_exists($class_name)) {
-                return $this->debug ? array('message' => "Class '{$class_name}' not found", 'status' => false, 'value' => $class_name) : false;
+                throw new Exception("Class '{$class_name}' not found");
             }
             
             eval('$object = ' . "new {$class_name}();");
@@ -55,7 +55,7 @@ class Factory {
             return $object;
 
         } catch(Exception $e) {
-
+            return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('class_name' => $class_name)) : false;
         }
         
     }
