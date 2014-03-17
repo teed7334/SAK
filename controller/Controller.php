@@ -42,6 +42,24 @@ class Controller {
 		return $ip;
 	}
 
+	public function mapping($data = array(), $mapping = array()) {
+		$tmp = array();
+
+		if(is_array($data)) {
+			foreach($data as $key => $value) {
+				if(isset($mapping[$key])) {
+					$tmp[$mapping[$key]] = $value;
+				}
+			}
+		} else {
+			if(isset($mapping[$data])) {
+				$tmp = $mapping[$data];
+			}
+		}
+
+		return $tmp;
+	}
+
 	public function post($accept = array(), $filter = FALSE) {
 	
 		$check = count($accept);
@@ -300,7 +318,7 @@ class Controller {
 				throw new Exception('Is null');
 			}
 
-			$_SERVER['js_controller'][$key] = "" . $value;
+			$_SERVER['argv']['js_assign'][$key] = "" . $value;
 
 			return true;
 

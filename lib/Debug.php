@@ -9,7 +9,7 @@ class Debug {
 	}
 
 	public function console_log($value = '') {
-		$_SERVER['js_controller']['console_log'] = json_encode($value);
+		$_SERVER['argv']['console_log'] = json_encode($value);
 	}
 }
 ?>

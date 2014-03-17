@@ -102,9 +102,9 @@ class Router {
                 throw new Exception("Failed opening '{$js_controller}' for inclusion");
             }
 
-            if(isset($_SERVER['js_controller'])) {
+            if(isset($_SERVER['argv'])) {
 
-                foreach($_SERVER['js_controller'] as $key => $value) {
+                foreach($_SERVER['argv'] as $key => $value) {
 
                     $value = json_encode($value);
 
