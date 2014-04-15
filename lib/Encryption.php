@@ -36,7 +36,7 @@ class Encryption {
 
     }
 
-    public function decode($code_signal = '') {
+    public function decode($code_signal = '', $to_array = FALSE) {
 
         try {
 
@@ -46,7 +46,7 @@ class Encryption {
                 throw new Exception("Can't use base64 decode '{$code_signal}'");
             }
 
-            $string = json_decode($string, true);
+            $string = json_decode($string, $to_array);
 
             if(!$string) {
                 throw new Exception("Can't use json decode '{$code_signal}'");
