@@ -16,10 +16,10 @@ class Encryption {
         
         try {
 
-            $string = serialize($plain_code);
+            $string = json_encode($plain_code);
 
             if(trim($string) == '') {
-                throw new Exception("Can't use serialize encode '{$plain_code}'");
+                throw new Exception("Can't use json encode '{$plain_code}'");
             }
 
             $string = base64_encode($string);
@@ -46,10 +46,10 @@ class Encryption {
                 throw new Exception("Can't use base64 decode '{$code_signal}'");
             }
 
-            $string = unserialize($string);
+            $string = json_decode($string, true);
 
             if(!$string) {
-                throw new Exception("Can't use unserialize encode '{$code_signal}'");
+                throw new Exception("Can't use json decode '{$code_signal}'");
             }
 
             return $string;
