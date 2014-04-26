@@ -1,7 +1,7 @@
 <?php
 class Router {
 
-	protected $uri = '';
+    protected $uri = '';
     protected $debug = false;
 
     public function rule() {
@@ -11,7 +11,7 @@ class Router {
             $_GET['controller'] = 'index';
             $_GET['action'] = 'index';
 
-            $uri = $_SERVER['REQUEST_URI'];
+            $uri = @$_SERVER['REQUEST_URI'];
 
             if(CHROOT != '') {
                 $uri = explode(CHROOT, $_SERVER['REQUEST_URI']);
@@ -39,7 +39,7 @@ class Router {
                 }
         	}
 
-            $uri = explode('&', $uri[1]);
+            $uri = @explode('&', $uri[1]);
 
             foreach($uri as $items) {
                 $get = explode('=', $items);
