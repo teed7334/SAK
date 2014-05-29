@@ -3,7 +3,6 @@ class index extends Controller {
 	
 	public function action_index() {
 		$this->assign('hello', 'Hello World!!!!');
-        var_dump($_SERVER);
 		$this->layout2();
 	}
 
