@@ -8,13 +8,13 @@ class Router {
 
         try {
 
-            $_GET['controller'] = 'index';
-            $_GET['action'] = 'index';
+            $_GET['controller'] = isset($_GET['controller']) ? $_GET['controller'] : 'index';
+            $_GET['action'] = isset($_GET['action']) ? $_GET['action'] : 'index';
 
             $uri = @$_SERVER['REQUEST_URI'];
 
-            if(CHROOT != '') {
-                $uri = explode(CHROOT, $_SERVER['REQUEST_URI']);
+            if('' !== (string) CHROOT) {
+                $uri = explode(CHROOT, $uri);
                 $uri = $uri[1];
             }
 
@@ -24,16 +24,16 @@ class Router {
         	$count = count($uri[0]);
 
         	for($i = 0; $i < $count; $i++) {
-                if(trim($uri[0][$i]) != '') {
-            		if($i == 1) {
-            			$_GET['controller'] = (string)filter_var($uri[0][$i], FILTER_SANITIZE_STRING);
-            		} elseif($i == 2) {
-            			$_GET['action'] = (string)filter_var($uri[0][$i], FILTER_SANITIZE_STRING);
-            		} elseif($i > 2) {
-            			if($i % 2 != 0) {
-            				$_GET[(string)filter_var($uri[0][$i], FILTER_SANITIZE_STRING)] = NULL;
+                if('' !== (string) trim($uri[0][$i])) {
+            		if(1 === $i) {
+            			$_GET['controller'] = (string) filter_var($uri[0][$i], FILTER_SANITIZE_STRING);
+            		} elseif(2 === $i) {
+            			$_GET['action'] = (string) filter_var($uri[0][$i], FILTER_SANITIZE_STRING);
+            		} elseif(2 < $i) {
+            			if(0 != $i % 2) {
+            				$_GET[ (string) filter_var($uri[0][$i], FILTER_SANITIZE_STRING)] = NULL;
             			} else {
-            				$_GET[$uri[0][$i - 1]] = (string)filter_var($uri[0][$i], FILTER_SANITIZE_STRING);
+            				$_GET[$uri[0][$i - 1]] = (string) filter_var($uri[0][$i], FILTER_SANITIZE_STRING);
             			}
             		}
                 }
@@ -43,8 +43,8 @@ class Router {
 
             foreach($uri as $items) {
                 $get = explode('=', $items);
-                if(trim($get[0]) != '' && trim($get[1]) != '') {
-                    $_GET[(string)filter_var($get[0], FILTER_SANITIZE_STRING)] = (string)filter_var($get[1], FILTER_SANITIZE_STRING);;
+                if('' != (string) trim($get[0]) && '' != (string) trim($get[1])) {
+                    $_GET[ (string) filter_var($get[0], FILTER_SANITIZE_STRING)] = (string) filter_var($get[1], FILTER_SANITIZE_STRING);;
                 }
             }
 
@@ -108,12 +108,12 @@ class Router {
 
                     $value = json_encode($value);
 
-                    if(trim($key) == '') {
+                    if('' === trim($key)) {
                         throw new Exception("Is null");
-                    } elseif($key == 'console_log') {
+                    } elseif('console_log' === (string) $key) {
                         echo "console.log(JSON.parse({$value}));\n";
-                    } else {
-                        if($value == '') {
+                    } elseif(!is_numeric($key)) {
+                        if('' === $value) {
                             echo "var {$key} = '';\n";    
                         } else {
                             echo "var {$key} = $value;\n";
