@@ -1,4 +1,10 @@
 <?php 
+interface filter_Interface {
+    public function string ($string = '');
+    public function email ($string = '');
+    public function uri ($string = '');
+}
+
 class filter {
 	
 	public function string ($string = '') {

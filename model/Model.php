@@ -1,13 +1,18 @@
 <?php
-class Model {
+interface model_Interface {
+    public function debug($debug = false);
+}
+
+class Model implements model_Interface {
 
 	protected $mysql = NULL;
-	protected $debug = false;
+    protected $lib = NULL;
+    protected $debug = false;
 
 	public function __construct() {
-		$lib = new Factory();
-		$lib->setDirectory(LIB);
-		$this->mysql = $lib->make('MySQL'); 
+		$this->lib = new Factory();
+		$this->lib->setDirectory(LIB);
+		$this->mysql = $this->lib->make('MySQL'); 
 		$this->mysql->setAdapter(HOST, ACCOUNT, PASSWORD, DATABASE);
 	}
 

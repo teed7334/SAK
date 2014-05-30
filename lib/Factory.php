@@ -1,5 +1,11 @@
 <?php
-class Factory {
+interface factory_Interface {
+    public function setDirectory($path = '');
+    public function debug($debug = false);
+    public function make($class_name = '');
+}
+
+class Factory implements factory_Interface {
         
     protected $path = '';
     protected $resource = array();
@@ -8,10 +14,6 @@ class Factory {
     public function setDirectory($path = '') {
 
         try {
-
-            if($path == '') {
-                throw new Exception('Is null');
-            }
 
             if(!is_dir($path)) {
                 throw new Exception("Directory '{$path}' not found");

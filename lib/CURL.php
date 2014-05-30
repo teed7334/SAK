@@ -1,5 +1,11 @@
 <?php 
-class CURL {
+interface curl_Interface {
+    public function debug($debug = false);
+    public function get($url = '', $params = array(), $options = array());
+    public function post($url = '', $params = array(), $options = array());
+}
+
+class CURL implements curl_Interface {
 	
 	protected $debug = false;
 
@@ -16,7 +22,7 @@ class CURL {
 			$query = '';
 
 			foreach($params as $key => $value) {
-				if($query == '') {
+				if('' === (string) trim($query)) {
 					$query = "?{$key}={$value}";
 				} else {
 					$query .= "&{$key}={$value}";
@@ -24,7 +30,7 @@ class CURL {
 			}
 
 			curl_setopt($ch, CURLOPT_URL, "{$url}{$query}");
-			if(count($options) > 0) {
+			if(0 < count($options)) {
 				curl_setopt_array($options);
 			}
 			$result = curl_exec($ch);
@@ -51,7 +57,7 @@ class CURL {
 			curl_setopt($ch, CURLOPT_URL, $url);
 			curl_setopt($ch, CURLOPT_POST, true);
 			curl_setopt($ch, CURLOPT_POSTFIELDS, http_build_query($params));
-			if(count($options) > 0) {
+			if(0 < count($options)) {
 				curl_setopt_array($options);
 			}
 			$result = curl_exec($ch);

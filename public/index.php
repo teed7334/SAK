@@ -1,5 +1,5 @@
 <?php
-ob_start("ob_gzhandler");
+ob_start();
 session_start();
 require_once(realpath('../config/config.php'));
 include_once(LIB . '/Factory.php');
@@ -15,10 +15,11 @@ $router->rule();
 
 $router->controller();
 ?>
-
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 <script>
 <?php
 $router->js_controller();
 ?>
 </script>
+<?php 
+ob_end_flush();
+?>

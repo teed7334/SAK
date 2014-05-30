@@ -1,4 +1,9 @@
 <?php
+interface debug_Interface {
+    public function dump($value = '');
+    public function console_log($value = '');
+}
+
 class Debug {
 
 	public function dump($value = '') {

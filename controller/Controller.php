@@ -1,5 +1,20 @@
 <?php
-class Controller {
+interface controller_Interface {
+    public function debug($debug = false);
+    public function getClientIP();
+    public function setCookie($key = '', $value = '');
+    public function getCookie($key = '', $filter = FALSE);
+    public function removeCookie($key = '');
+    public function setSession($key = '', $value = '');
+    public function getSession($key = '', $filter = FALSE);
+    public function removeSession($key = '');
+    public function assign($key = '', $value = '');
+    public function view($view = '');
+    public function element($element = '');
+    public function js_assign($key = '', $value = '');
+}
+
+class Controller implements controller_Interface {
 
 	protected $model = '';
 	protected $view = '';
@@ -18,113 +33,31 @@ class Controller {
 		$this->debug = $debug;
 	}
 
-	public function securityString($string = '', $start = 0, $length = 0, $encode = 'UTF-8') {
-		return mb_substr(strip_tags($string), $start, $length, $encode);
-	}
-
 	public function getClientIP() {
 		$ip = false;
 
 		if(getenv('HTTP_CLIENT_IP')) {
 		    $ip = getenv('HTTP_CLIENT_IP');
-		} else if(getenv('HTTP_X_FORWARDED_FOR')) {
+		} elseif(getenv('HTTP_X_FORWARDED_FOR')) {
 		    $ip = getenv('HTTP_X_FORWARDED_FOR');
-		} else if(getenv('HTTP_X_FORWARDED')) {
+		} elseif(getenv('HTTP_X_FORWARDED')) {
 		    $ip = getenv('HTTP_X_FORWARDED');
-		} else if(getenv('HTTP_FORWARDED_FOR')) {
+		} elseif(getenv('HTTP_FORWARDED_FOR')) {
 		    $ip = getenv('HTTP_FORWARDED_FOR');
-		} else if(getenv('HTTP_FORWARDED')) {
+		} elseif(getenv('HTTP_FORWARDED')) {
 		    $ip = getenv('HTTP_FORWARDED');
-		} else if(getenv('REMOTE_ADDR')) {
+		} elseif(getenv('REMOTE_ADDR')) {
 		    $ip = getenv('REMOTE_ADDR');
 		}
 
 		return $ip;
 	}
 
-	public function mapping($data = array(), $mapping = array()) {
-		$tmp = array();
-
-		if(is_array($data)) {
-			foreach($data as $key => $value) {
-				if(isset($mapping[$key])) {
-					$tmp[$mapping[$key]] = $value;
-				}
-			}
-		} else {
-			if(isset($mapping[$data])) {
-				$tmp = $mapping[$data];
-			}
-		}
-
-		return $tmp;
-	}
-
-	public function post($accept = array(), $filter = FALSE) {
-	
-		$check = count($accept);
-		$data = array();
-
-		if($filter) {
-			$Filter = $this->lib->make('Filter');
-		}
-		
-		if($check > 0) {
-			foreach($accept as $value) {
-				if(isset($_POST[$value])) {
-					$data[$value] = $filter ? $Filter->string($_POST[$value]) : $_POST[$value];
-					$check--;
-				}
-			}
-		} else {
-			foreach($_POST as $key => $value) {
-				$data[$key] = $filter ? $Filter->string($_POST[$value]) : $value;
-			}
-			$check = 0;
-		}
-		
-		if($check == 0) {
-			return $data;
-		}
-
-		return false;
-	}
-
-	public function get($accept = array(), $filter = FALSE) {
-		
-		$check = count($accept);
-		$data = array();
-
-		if($filter) {
-			$Filter = $this->lib->make('Filter');
-		}
-		
-		if($check > 0) {
-			foreach($accept as $value) {
-				if(isset($_GET[$value])) {
-					$data[$value] = $filter ? $Filter->string($_GET[$value]) : $_GET[$value];
-					$check--;
-				}
-			}
-		} else {
-			foreach($_GET as $key => $value) {
-				$data[$key] = $filter ? $Filter->string($_GET[$value]) : $value;
-			}
-			$check = 0;
-		}
-		
-		if($check == 0) {
-			return $data;
-		}
-
-		return false;
-	}
-
 	public function setCookie($key = '', $value = '') {
 
 		try {
 
-			if($key == '') {
+			if('' === (string) trim($key)) {
 				throw new Exception("undefined index {$key}");
 			}
 			
@@ -144,7 +77,7 @@ class Controller {
 
 		try {
 			
-			if($key == '' || !isset($_COOKIE[$key])) {
+			if( '' === (string) trim($key) || !isset($_COOKIE[$key])) {
 				throw new Exception("undefined index {$key}");
 			}
 
@@ -167,7 +100,7 @@ class Controller {
 
 		try {
 			
-			if($key == '' || !isset($_COOKIE[$key])) {
+			if('' === (string) trim($key) || !isset($_COOKIE[$key])) {
 				throw new Exception("undefined index {$key}");
 			}
 
@@ -185,7 +118,7 @@ class Controller {
 
 		try {
 
-			if($key == '') {
+			if('' === (string) trim($key)) {
 				throw new Exception("undefined index {$key}");
 			}
 			
@@ -205,7 +138,7 @@ class Controller {
 
 		try {
 			
-			if($key == '' || !isset($_SESSION[$key])) {
+			if('' === (string) trim($key) || !isset($_SESSION[$key])) {
 				throw new Exception("undefined index {$key}");
 			}
 
@@ -228,7 +161,7 @@ class Controller {
 
 		try {
 			
-			if($key == '' || !isset($_SESSION[$key])) {
+			if('' === (string) trim($key) || !isset($_SESSION[$key])) {
 				throw new Exception("undefined index {$key}");
 			}
 
@@ -246,7 +179,7 @@ class Controller {
 
 		try {
 
-			if($key == '' || $value == '') {
+			if('' === (string) trim($key) || '' === (string) trim($value)) {
 				throw new Exception('Is null');
 			}
 
@@ -264,7 +197,7 @@ class Controller {
 
 		try {
 
-			if($view == '') {
+			if('' === (string) trim($view)) {
 				throw new Exception('Is null');
 	        }
 
@@ -289,7 +222,7 @@ class Controller {
 
 		try {
 
-			if($element == '') {
+			if('' === (string) trim($element)) {
 				throw new Exception('Is null');
 	        }
 
@@ -314,7 +247,7 @@ class Controller {
 
 		try {
 
-			if($key == '' || $value == '') {
+			if('' === (string) trim($key) || '' === (string) trim($value)) {
 				throw new Exception('Is null');
 			}
 

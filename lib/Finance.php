@@ -1,4 +1,11 @@
 <?php 
+interface finance_Interface {
+    public function debug($debug = false);
+    public function floor($value = 0, $precision = 0);
+    public function ceil($value = 0, $precision = 0);
+    public function exchange_rate($from = '', $to = '');
+}
+
 class Finance {
 
 	protected $debug = false;
@@ -43,7 +50,7 @@ class Finance {
 
 		try {
 
-			if($from == '' || $to == '') {
+			if('' === (string) trim($from) || '' === (string) trim($to)) {
 				throw new Exception('Is null');
 			}
 
@@ -51,7 +58,7 @@ class Finance {
 			$rate = file_get_contents($uri);  
 			$rate = explode(',', $rate);  
 			
-			if(count($rate) < 2) {
+			if(2 > count($rate)) {
 				throw new Exception("Can't get exchange rate");
 			}
 

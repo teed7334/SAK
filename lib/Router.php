@@ -1,5 +1,12 @@
 <?php
-class Router {
+interface router_Interface {
+    public function rule();
+    public function debug($debug = false);
+    public function controller();
+    public function js_controller();
+}
+
+class Router implements router_Interface {
 
     protected $uri = '';
     protected $debug = false;
@@ -13,7 +20,7 @@ class Router {
 
             $uri = @$_SERVER['REQUEST_URI'];
 
-            if('' !== (string) CHROOT) {
+            if('' !== (string) trim(CHROOT)) {
                 $uri = explode(CHROOT, $uri);
                 $uri = $uri[1];
             }
@@ -108,7 +115,7 @@ class Router {
 
                     $value = json_encode($value);
 
-                    if('' === trim($key)) {
+                    if('' === (string) trim($key)) {
                         throw new Exception("Is null");
                     } elseif('console_log' === (string) $key) {
                         echo "console.log(JSON.parse({$value}));\n";

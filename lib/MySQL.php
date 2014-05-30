@@ -1,5 +1,19 @@
 <?php
-class MySQL{
+interface mysql_Interface {
+    public function debug($debug = false);
+    public function setAdapter($host = '', $user = '', $password = '', $database = '');
+    public function table($table = '');
+    public function find($order = NULL, $group = NULL, $limit = NULL);
+    public function save($where = array());
+    public function add();
+    public function delete();
+    public function bind_param($sql = NULL, $params = array(), $delimiter = '?');
+    public function query();
+    protected function _clear();
+    protected function _free_table();
+}
+
+class MySQL implements mysql_Interface {
 
 	protected $debug = false;
 
@@ -15,8 +29,8 @@ class MySQL{
 	public function setAdapter($host = '', $user = '', $password = '', $database = '') {
 		try {
 
-			if($host == '' || $user == '' || $database == '') {
-				throw new Exception(mysql_error());
+			if('' === (string) trim($host) || '' === (string) trim($user) || '' === (string) trim($database)) {
+				throw new Exception('Is null');
 			}
 			
 			$this->adapter = @mysql_pconnect($host, $user, $password);
@@ -40,16 +54,16 @@ class MySQL{
 		}
 	}
 
-	public function table($Table = '') {
+	public function table($table = '') {
 		try {
 
 			$this->_free_table();
 
-			if($Table == '') {
+			if('' === (string) trim($table)) {
 				throw new Exception('Is null');
 			}
 
-			$sql = sprintf('SHOW COLUMNS FROM %s', mysql_real_escape_string($Table));
+			$sql = sprintf('SHOW COLUMNS FROM %s', mysql_real_escape_string($table));
 					
 			$result = mysql_query($sql, $this->adapter);
 
@@ -64,12 +78,12 @@ class MySQL{
 
 			mysql_free_result($result);
 
-			$this->table = $Table;
+			$this->table = $table;
 
 			return array($this->table => $this->columns);
 
 		} catch(Exception $e) {
-			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('Table' => $Table)) : false;
+			return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('Table' => $table)) : false;
 		}
 	}
 	
@@ -77,7 +91,7 @@ class MySQL{
 
 		try {
 
-			if($this->table != NULL) {
+			if(NULL !== $this->table) {
 
 				$_where = '';
 				$_order = '';
@@ -86,7 +100,7 @@ class MySQL{
 
 				$sql = sprintf('SELECT * FROM %s ', mysql_real_escape_string($this->table));
 				foreach($this->columns as $items) {
-					if($this->{$items} != NULL) {
+					if(NULL !== $this->{$items}) {
 						if(is_numeric($this->{$items})) {
 							$_where .= $_where != '' ? sprintf("AND {$items} = %s ", mysql_real_escape_string($this->{$items})) : sprintf("{$items} = %s ", mysql_real_escape_string($this->{$items}));
 						} else {
@@ -94,16 +108,16 @@ class MySQL{
 						}
 					}
 				}
-				if($_where != NULL) {
+				if('' !== (string) trim($_where)) {
 					$_where = "WHERE {$_where}";
 				}
-				if($order != NULL) {
+				if('' !== (string) trim($order)) {
 					$_order .= "ORDER BY {$order} ";
 				}
-				if($group != NULL) {
+				if('' !== (string) trim($group)) {
 					$_group .= "GROUP BY {$group} ";
 				}
-				if($limit != NULL) {
+				if('' !== (string) trim($limit)) {
 					$_limit .= "LIMIT {$limit} ";
 				}
 				$sql .= "{$_where}{$_group}{$_order}{$_limit}";
@@ -136,7 +150,7 @@ class MySQL{
 		
 		try {
 
-			if($this->table != NULL) {
+			if(NULL !== $this->table) {
 
 				$_set = '';
 				$_where = '';
@@ -144,7 +158,7 @@ class MySQL{
 				$sql = sprintf('UPDATE %s SET ', mysql_real_escape_string($this->table));
 
 				foreach($this->columns as $items) {
-					if($this->{$items} != NULL) {
+					if(NULL !== $this->{$items}) {
 						if(is_numeric($this->{$items})) {
 							$_set .= $_set != '' ? sprintf(", {$items} = %s ", mysql_real_escape_string($this->{$items})) : sprintf("{$items} = %s", mysql_real_escape_string($this->{$items}));
 						} else {
@@ -161,7 +175,7 @@ class MySQL{
 					}
 				}
 
-				if($_set == '' || $_where == '') {
+				if('' !== (string) trim($_set) ||'' !==  (string) trim($_where)) {
 					throw new Exception('Is null');
 				}
 
@@ -195,7 +209,7 @@ class MySQL{
 				$sql = sprintf('INSERT INTO %s ', mysql_real_escape_string($this->table));
 
 				foreach($this->columns as $items) {
-					if($this->{$items} != NULL) {
+					if(NULL !== $this->{$items}) {
 						if(is_numeric($this->{$items})) {
 							$_column .= $_column != '' ? sprintf(", %s", mysql_real_escape_string($items)) : sprintf("%s", mysql_real_escape_string($items));
 							$_value .= $_value != '' ? sprintf(", %s", mysql_real_escape_string($this->{$items})) : sprintf("%s", mysql_real_escape_string($this->{$items}));
@@ -206,7 +220,7 @@ class MySQL{
 					}
 				}
 
-				if($_column == '' || $_value == '') {
+				if('' !== (string) trim($_column) || '' !== (string) trim($_value)) {
 					throw new Exception('Is null');
 				}
 
@@ -235,13 +249,13 @@ class MySQL{
 
 		try {
 
-			if($this->table != NULL) {
+			if(NULL !== $this->table) {
 
 				$_where = '';
 
 				$sql = sprintf('DELETE FROM %s ', mysql_real_escape_string($this->table));
 				foreach($this->columns as $items) {
-					if($this->{$items} != NULL) {
+					if(NULL !== $this->{$items}) {
 						if(is_numeric($this->{$items})) {
 							$_where .= $_where != '' ? sprintf("AND {$items} = %s ", mysql_real_escape_string($this->{$items})) : sprintf("{$items} = %s ", mysql_real_escape_string($this->{$items}));
 						} else {
@@ -249,7 +263,7 @@ class MySQL{
 						}
 					}
 				}
-				if($_where != '') {
+				if('' !== (string) trim($_where)) {
 					$_where = "WHERE {$_where}";
 				}
 				
@@ -282,7 +296,7 @@ class MySQL{
 			
 			$count = count($params);
 			
-			if((count($split) -1) != $count) {
+			if((count($split) -1) !== $count) {
 				throw new Exception('params error');
 			}
 
@@ -318,7 +332,7 @@ class MySQL{
 			$mode = strtoupper(trim($this->sql));
 			$data = array();
 
-			if(substr($mode, 0, 6) == 'SELECT' || substr($mode, 0, 4) == 'SHOW') {
+			if('SELECT' === (string) substr($mode, 0, 6) || 'SHOW' === (string) substr($mode, 0, 4)) {
 
 				$result = mysql_query($this->sql, $this->adapter);
 
@@ -332,7 +346,7 @@ class MySQL{
 
 				mysql_free_result($result);
 
-			} else if(substr($mode, 0, 6) == 'INSERT') {
+			} else if('INSERT' === substr($mode, 0, 6)) {
 
 				$result = mysql_query($this->sql, $this->adapter);
 
@@ -369,7 +383,7 @@ class MySQL{
 	}
 
 	protected function _free_table() {
-		if(count($this->columns) == 0) {
+		if(0 === count($this->columns)) {
 			return false;
 		}
 

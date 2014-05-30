@@ -1,5 +1,13 @@
 <?php
-class Encryption {
+interface encryption_Interface {
+    public function debug($debug = false);
+    public function addKey($key = '');
+    public function encode($plain_code = '');
+    public function decode($code_signal = '', $to_array = FALSE);
+    public function token($plain_code = '');
+}
+
+class Encryption implements encryption_Interface {
 
     protected $debug = false;
     protected $key = '';
@@ -18,20 +26,20 @@ class Encryption {
 
             $string = json_encode($plain_code);
 
-            if(trim($string) == '') {
+            if('' === (string) trim($string)) {
                 throw new Exception("Can't use json encode '{$plain_code}'");
             }
 
             $string = base64_encode($string);
 
-            if(trim($string) == '') {
+            if('' === (string) trim($string)) {
                 throw new Exception("Can't use base64 encode '{$plain_code}'");
             }
 
             return $string;
 
         } catch(Exception $e) {
-            return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('from' => $from, 'to' => $to)) : false;
+            return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('plain_code' => $plain_code)) : false;
         }
 
     }
@@ -42,7 +50,7 @@ class Encryption {
 
             $string = base64_decode($code_signal);
 
-            if(trim($string) == '') {
+            if('' === (string) trim($string)) {
                 throw new Exception("Can't use base64 decode '{$code_signal}'");
             }
 
@@ -55,7 +63,7 @@ class Encryption {
             return $string;
 
         } catch(Exception $e) {
-            return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('from' => $from, 'to' => $to)) : false;
+            return $this->debug ? array('message' => $e->getMessage(), 'status' => false, 'value' => array('code_signal' => $code_signal, 'to_array' => $to_array)) : false;
         }
 
     }
