@@ -131,8 +131,10 @@ class Router implements router_Interface {
                 
             }
 
+            echo "<script>\n";
             include_once($js_controller);
             echo "\n";
+            echo '</script>';
 
             unset($_SERVER['js_controller']);
 

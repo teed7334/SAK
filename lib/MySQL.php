@@ -9,8 +9,6 @@ interface mysql_Interface {
     public function delete();
     public function bind_param($sql = NULL, $params = array(), $delimiter = '?');
     public function query();
-    protected function _clear();
-    protected function _free_table();
 }
 
 class MySQL implements mysql_Interface {

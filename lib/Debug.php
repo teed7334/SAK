@@ -4,7 +4,7 @@ interface debug_Interface {
     public function console_log($value = '');
 }
 
-class Debug {
+class Debug implements debug_Interface {
 
 	public function dump($value = '') {
 		$value = var_export($value, true);

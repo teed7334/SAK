@@ -5,7 +5,7 @@ interface filter_Interface {
     public function uri ($string = '');
 }
 
-class filter {
+class filter implements filter_Interface {
 	
 	public function string ($string = '') {
 		return (string) filter_var($string, FILTER_SANITIZE_STRING);

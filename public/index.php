@@ -14,12 +14,7 @@ $router = $lib->make('Router');
 $router->rule();
 
 $router->controller();
-?>
-<script>
-<?php
 $router->js_controller();
-?>
-</script>
-<?php 
+
 ob_end_flush();
 ?>

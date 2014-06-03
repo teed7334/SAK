@@ -6,7 +6,7 @@ interface finance_Interface {
     public function exchange_rate($from = '', $to = '');
 }
 
-class Finance {
+class Finance implements finance_Interface {
 
 	protected $debug = false;
 
